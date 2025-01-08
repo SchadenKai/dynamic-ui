@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  web_server:
+    build:
+      context: ../../web_server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ../../web_server:/app
+    depends_on:
+      - api_server
+
+  api_server:
+    build:
+      context: ../../api_server
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV_FILE=.env
+    volumes:
+      - ../../api_server:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
