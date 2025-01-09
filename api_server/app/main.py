@@ -3,12 +3,12 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(app: FastAPI):
     print("App started")
     yield
 
 app = FastAPI(
-    title="API Server",
+    title="Dynamic UI API Server",
     lifespan=lifespan
 )
 

@@ -85,4 +85,20 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  table {
+    @apply w-full border-collapse;
+  }
+  th,
+  td {
+    @apply border px-4 py-2 text-left;
+  }
+  th {
+    @apply bg-gray-200 font-bold;
+  }
+  tr:nth-child(even) {
+    @apply bg-gray-100;
+  }
+  tr:hover {
+    @apply bg-gray-300;
+  }
 }
