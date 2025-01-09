@@ -81,15 +81,32 @@ body {
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans leading-normal;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+  }
+  p {
+    @apply mb-4;
+  }
+  a {
+    @apply text-blue-500 hover:underline;
+  }
+  ul, ol {
+    @apply list-disc list-inside mb-4;
+  }
+  li {
+    @apply mb-2;
   }
   table {
-    @apply w-full border-collapse;
+    @apply w-full border-collapse mb-4;
   }
-  th,
-  td {
+  th, td {
     @apply border px-4 py-2 text-left;
   }
   th {
@@ -100,5 +117,20 @@ body {
   }
   tr:hover {
     @apply bg-gray-300;
+  }
+  button {
+    @apply bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700;
+  }
+  input, textarea, select {
+    @apply border border-gray-300 rounded px-4 py-2 mb-4 w-full;
+  }
+  input:focus, textarea:focus, select:focus {
+    @apply outline-none border-blue-500;
+  }
+  form {
+    @apply mb-4;
+  }
+  header, footer, section, article, aside, nav {
+    @apply mb-4;
   }
 }
