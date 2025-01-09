@@ -7,8 +7,6 @@ from app.core.config import Settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Loading OPENAI API key")
-    openai.api_key = Settings().openai_key
     print("App started")
     yield
 
