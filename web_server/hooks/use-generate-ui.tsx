@@ -21,15 +21,25 @@ function parseAttributes(
   return parsedAttributes;
 }
 
-function renderElement(element: DynamicElement, idx?: number): React.ReactNode {
+export function renderElement(element: DynamicElement, idx?: number): React.ReactNode {
   const { type, label, children, attributes } = element;
-  attributes?.push({ name: "key", value: idx?.toString() || "" });
+
+  attributes?.push({ name: "key", value: idx?.toString() ?? "" });
   const parsedAttributes = parseAttributes(attributes);
+  console.log(
+    `parsedAttributes BEING USED by ${type}: `,
+    JSON.stringify(parsedAttributes)
+  );
   const props = parsedAttributes.reduce(
     (acc, { name, value }) => ({ ...acc, [name]: value }),
     {}
   );
   console.log(`PROPS BEING USED by ${type}: `, JSON.stringify(props));
+
+  if (type === "input") {
+    const element = React.createElement(type, { ...props });
+    return element;
+  }
 
   if (label) {
     const element = React.createElement(type, { ...props }, label);
@@ -53,6 +63,7 @@ interface GenerateUIHook {
   handleGenerateUI: () => void;
   isLoading: boolean;
   rawOutput: DynamicElement | null;
+  errorAIMessage: string;
 }
 
 export function useGenerateUI(user_query: string): GenerateUIHook {
@@ -60,6 +71,7 @@ export function useGenerateUI(user_query: string): GenerateUIHook {
   const [rawResponse, setRawResponse] = useLocalStorage("rawResponse", "");
   const [rawOutput, setRawOutput] = useState<DynamicElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorAIMessage, setErrorAIMessage] = useState("");
 
   const handleGenerateUI = () => {
     const generateUI = async () => {
@@ -67,26 +79,24 @@ export function useGenerateUI(user_query: string): GenerateUIHook {
       const data = { user_input: user_query };
       const res = await generateUISS(data);
       setRawResponse(JSON.stringify(res));
-      if (rawResponse) {
-        const jsonResponse = JSON.parse(rawResponse);
-        const parsedFuncArgs = parseGenerateUIFuncArgs(
-          jsonResponse.function.arguments
-        );
-        if (parsedFuncArgs) {
-          setRawOutput(parsedFuncArgs);
-          setDynamicElement(renderElement(parsedFuncArgs));
-        }
-      } else if (res) {
+      if (typeof res !== "string" && res) {
         const parsedFuncArgs = parseGenerateUIFuncArgs(res.function.arguments);
         if (parsedFuncArgs) {
           setRawOutput(parsedFuncArgs);
           setDynamicElement(renderElement(parsedFuncArgs));
         }
+      } else if (typeof res === "string") {
+        setErrorAIMessage(res);
       }
       setIsLoading(false);
     };
     generateUI();
   };
-
-  return { dynamicElement, handleGenerateUI, isLoading, rawOutput };
+  return {
+    dynamicElement,
+    handleGenerateUI,
+    isLoading,
+    rawOutput,
+    errorAIMessage,
+  };
 }

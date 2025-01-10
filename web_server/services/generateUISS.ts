@@ -11,7 +11,7 @@ export interface GenerateUIRequest {
     user_input: string
 }
 
-export const generateUISS = async (data: GenerateUIRequest): Promise<GenerateUIResponse | null> => {
+export const generateUISS = async (data: GenerateUIRequest): Promise<GenerateUIResponse | string | null> => {
     const res = await fetch('http://localhost:8000/chat/generate-ui', {
         method: 'POST',
         headers: {

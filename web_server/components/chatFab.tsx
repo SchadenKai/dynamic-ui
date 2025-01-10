@@ -1,7 +1,7 @@
 import { LucideBot } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 interface ChatFabProps {
   readonly userQuery: string;
@@ -22,10 +22,10 @@ export default function ChatFab({
         <LucideBot />
         <h1>Dynamic UI Bot</h1>
       </CardHeader>
-      <CardContent className="flex flex-col justify-end">
-        <Input
-          type="text"
+      <CardContent className="w-full h-full flex flex-col justify-end">
+        <Textarea
           placeholder="Generate a forms..."
+          rows={10}
           value={userQuery}
           onChange={(e) => {
             setUserQuery(e.target.value);

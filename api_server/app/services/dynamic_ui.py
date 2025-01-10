@@ -13,19 +13,23 @@ tools = [
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum":["div", "button", "header", "section", "input", "form", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td", "img", "span", "nav", "footer", "article", "aside", "main", "figure", "figcaption", "blockquote", "pre", "code", "label", "textarea", "select", "option", "iframe", "canvas", "video", "audio", "source", "link", "meta", "style", "script"]
+                  "enum":["div", "button", "header", "section", "input", "form", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td", "img", "span", "nav", "footer", "article", "aside", "main", "figure", "figcaption", "blockquote", "pre", "code", "label", "textarea", "select", "option", "iframe", "canvas", "video", "audio", "source", "link", "meta", "style", "script"],
+                  "description": "The type of the element to be generated"
                 },
                 "label":{
-                    "type":"string"
+                    "type":"string",
+                    "description": "The text content of the element"
                 },
                 "children": {
                     "type": "array",
+                    "description": "The children elements of the element",
                     "items": {
                        "$ref": "#",
                      }
                 },
                 "attributes":{
                     "type": "array", 
+                    "description": "The attributes of the element for example on click event for a button, type of inputs, etc.",
                     "items": {
                         "$ref": "#/$defs/attribute" 
                      }
@@ -51,9 +55,9 @@ def generate_ui(user_input: str):
     completion = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are a UI generator AI for a ReactJS application. Convert the user input into a UI that is compatible to ReactJS."},
+            {"role": "system", "content": "You are a UI generator AI for a ReactJS application. Make use of the `generate_ui` function to Convert the user input into a UI that is compatible to ReactJS. Also remember to make each UI being generated as complete as possible based on the request of the user."},
             {"role": "user", "content": f"{user_input}"}
         ],
         tools=tools
     )
-    return completion.choices[0].message.tool_calls
+    return completion.choices[0].message.tool_calls if completion.choices[0].message.tool_calls else completion.choices[0].message.content
