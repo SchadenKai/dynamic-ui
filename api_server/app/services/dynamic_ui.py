@@ -13,7 +13,7 @@ tools = [
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum":["div", "button", "header", "section", "input", "form", "legend"]
+                  "enum":["div", "button", "header", "section", "input", "form", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td", "img", "span", "nav", "footer", "article", "aside", "main", "figure", "figcaption", "blockquote", "pre", "code", "label", "textarea", "select", "option", "iframe", "canvas", "video", "audio", "source", "link", "meta", "style", "script"]
                 },
                 "label":{
                     "type":"string"
