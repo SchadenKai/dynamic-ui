@@ -1,164 +1,22 @@
 "use client";
 
+import ChatFab from "@/components/chatFab";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { parseGenerateUIFuncArgs } from "@/lib/parseGenerateUIFuncArgs";
-import { GenerateUIResponse, generateUISS } from "@/services/generateUISS";
+import { useGenerateUI } from "@/hooks/use-generate-ui";
 import React, { useState } from "react";
-
-export interface Element {
-  type: string;
-  label?: string;
-  children?: Element[];
-  attributes?: { name: string; value: string }[];
-}
-
-// const templateJSON: Element = {
-//   type: "table",
-//   children: [
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "th",
-//           label: "Date",
-//         },
-//         {
-//           type: "th",
-//           label: "Bill File",
-//         },
-//       ],
-//     },
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "td",
-//           label: "2023-01-01",
-//         },
-//         {
-//           type: "td",
-//           label: "bill_2023_01_01.pdf",
-//         },
-//       ],
-//     },
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "td",
-//           label: "2023-02-01",
-//         },
-//         {
-//           type: "td",
-//           label: "bill_2023_02_01.pdf",
-//         },
-//       ],
-//     },
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "td",
-//           label: "2023-02-01",
-//         },
-//         {
-//           type: "td",
-//           label: "bill_2023_02_01.pdf",
-//         },
-//       ],
-//     },
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "td",
-//           label: "2023-02-01",
-//         },
-//         {
-//           type: "td",
-//           label: "bill_2023_02_01.pdf",
-//         },
-//       ],
-//     },
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "td",
-//           label: "2023-02-01",
-//         },
-//         {
-//           type: "td",
-//           label: "bill_2023_02_01.pdf",
-//         },
-//       ],
-//     },
-//     {
-//       type: "tr",
-//       children: [
-//         {
-//           type: "td",
-//           label: "2023-02-01",
-//         },
-//         {
-//           type: "td",
-//           label: "bill_2023_02_01.pdf",
-//         },
-//       ],
-//     },
-
-//   ],
-// };
-
-function renderElement(element: Element): React.ReactNode {
-  console.log("ELEMENT: ", element);
-  const { type, label, children, attributes } = element;
-
-  const props = attributes?.reduce(
-    (acc, { name, value }) => ({ ...acc, [name]: value }),
-    {}
-  );
-  console.log("PROPS: ", props);
-
-  // if (type === "input") {
-  //   return React.createElement(type, { ...props, type: "text" });
-  // }
-
-  if (label) {
-    const element = React.createElement(type, {...props}, label);
-    console.log("ELEMENT: ", element);
-    return element
-  }
-
-  if (children) {
-    const element = React.createElement(type, {...props}, children.map((child) => renderElement(child)));
-    console.log("ELEMENT: ", element);
-    return element
-  }
-
-  return null;
-}
 
 export default function Home() {
   const [userQuery, setUserQuery] = useState("");
-  const [apiResponse, setApiResponse] = useState<GenerateUIResponse | null>();
-  const [templateJSON, setTemplateJSON] = useState<Element | null>(null);
-
-  const handleGenerateUI = async () => {
-    const response = await generateUISS({ user_input: userQuery });
-    console.log("WORKING RESPONSE: ", response);
-    if (response) {
-      console.log("response not null");
-      setTemplateJSON(parseGenerateUIFuncArgs(response.function.arguments));
-    } 
-    setApiResponse(response);
-  };
+  const { dynamicElement, handleGenerateUI, isLoading, rawOutput } =
+    useGenerateUI(userQuery);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+    <div className="flex items-start justify-center min-h-screen min-w-full p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="w-1/2 flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <ChatFab />
         <div className="flex flex-col gap-2 w-full">
           <Label htmlFor="user-query">Enter user query</Label>
           <Input
@@ -168,21 +26,25 @@ export default function Home() {
             onChange={(e) => setUserQuery(e.target.value)}
           />
           <div className="flex justify-end">
-            <Button onClick={handleGenerateUI}>Generate UI</Button>
+            <Button disabled={isLoading} onClick={handleGenerateUI}>
+              {isLoading ? "Generating UI..." : "Generate UI"}
+            </Button>
           </div>
         </div>
 
-        <div>
-          <h2>Raw Output</h2>
-          <div className="border border-gray-200 p-4 w-full">
-            <p>{JSON.stringify(apiResponse)}</p>
-          </div>
-        </div>
+        <Card className="w-full">
+          <CardHeader>Raw Output</CardHeader>
+          <CardContent className="border border-gray-200 p-4 w-full max-h-96 overflow-y-auto">
+            {rawOutput && <pre>{JSON.stringify(rawOutput, null, 2)}</pre>}
+          </CardContent>
+        </Card>
 
-        <div>
-          <h2>Output HTML</h2>
-          {templateJSON ? renderElement(templateJSON) : null}
-        </div>
+        <Card className="w-full">
+          <CardHeader>Component Rendered</CardHeader>
+          <CardContent className="border border-gray-200 p-4 w-full">
+            {dynamicElement}
+          </CardContent>
+        </Card>
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>
     </div>
