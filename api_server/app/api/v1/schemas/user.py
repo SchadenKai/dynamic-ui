@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel
@@ -14,3 +15,6 @@ class UsersBase(SQLModel):
     email: str
     phone_number: Optional[str] = None
     password_hash: str
+    
+class UsersCreate(UsersBase):
+    date_joined: None | datetime.datetime = datetime.datetime.now()
