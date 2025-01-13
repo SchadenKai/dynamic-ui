@@ -5,6 +5,7 @@ from app.services.user import create_user, get_user_by_id, get_all_users, delete
 from app.services.session import create_session_token, delete_session_token, is_token_valid
 from app.api.v1.schemas.user import UsersCreate, UsersBase
 from app.db.models.user import Users
+from app.api.dependencies import get_current_user
 import uuid
 import secrets
 
@@ -34,26 +35,20 @@ def logout(token: str, db_session: Session = Depends(get_session)):
     return {"message": "Logout successful"}
 
 @router.get("/{user_id}")
-def read_user(user_id: uuid.UUID, token: str, db_session: Session = Depends(get_session)):
-    if not is_token_valid(db_session, token):
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    user = get_user_by_id(db_session, user_id)
+def read_user(user_id: uuid.UUID, current_user: Users = Depends(get_current_user)):
+    user = get_user_by_id(current_user, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 @router.get("/")
-def read_users(token: str, db_session: Session = Depends(get_session)):
-    if not is_token_valid(db_session, token):
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    users = get_all_users(db_session)
+def read_users(current_user: Users = Depends(get_current_user)):
+    users = get_all_users(current_user)
     return users
 
 @router.delete("/{user_id}")
-def delete_user_endpoint(user_id: uuid.UUID, token: str, db_session: Session = Depends(get_session)):
-    if not is_token_valid(db_session, token):
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    success = delete_user(db_session, user_id)
+def delete_user_endpoint(user_id: uuid.UUID, current_user: Users = Depends(get_current_user)):
+    success = delete_user(current_user, user_id)
     if not success:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}
