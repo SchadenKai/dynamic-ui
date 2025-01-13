@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class ChatHistory(ChatHistoryBase, table=True):
     chat_id: int = Field(default=None, primary_key=True)
     sent_at: datetime | None = Field(default=datetime.now())
-    sender_id: uuid.UUID = Field(foreign_key="user.id")
+    sender_id: uuid.UUID = Field(foreign_key="users.user_id")
     
     sender: "Users" = Relationship(back_populates="chat_history")
     
