@@ -25,6 +25,16 @@ def delete_session_token(session: Session, token: str) -> bool:
 
 def is_token_valid(session: Session, token: str) -> bool:
     session_token = get_session_token(session, token)
-    if session_token and session_token.expires_at > datetime.now(timezone.utc):
-        return True
+    if session_token:
+        print("session token expires at: ", session_token.expires_at)
+        print("current time: ", datetime.now(timezone.utc))
+        current_time = datetime.now(timezone.utc)
+        # Ensure both datetime objects are aware before comparison
+        if session_token.expires_at.tzinfo is None:
+            # If expires_at is naive, make it aware
+            session_token.expires_at = session_token.expires_at.replace(tzinfo=timezone.utc)
+
+        # Now they are both aware datetime objects, so we can compare
+        if session_token.expires_at > current_time:
+            return True
     return False

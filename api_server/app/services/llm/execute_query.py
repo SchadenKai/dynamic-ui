@@ -2,7 +2,7 @@ import json
 from sqlalchemy import text
 from sqlmodel import Session
 from app.db.session import get_sqlalchemy_engine
-from app.core.openai_config import client
+from app.core.openai_config import openai_client
 
 
 def execute_query(query: str, params: dict = None):
@@ -32,7 +32,7 @@ def execute_query(query: str, params: dict = None):
             return None
 
 
-function_schema = {
+generate_sql_query_tool = {
     "name": "generate_sql_query",
     "description": "Generate an SQL query and parameters based on user request.",
     "parameters": {
@@ -64,13 +64,13 @@ def generate_query_from_prompt(user_request: str):
         dict: Results from the executed SQL query or an error message.
     """
     try:
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are an assistant that generates SQL queries from user requests."},
                 {"role": "user", "content": user_request}
             ],
-            functions=[function_schema],
+            functions=[generate_sql_query_tool],
             function_call="auto" 
         )
         if response.choices[0].message.content:

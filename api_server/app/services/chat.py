@@ -12,6 +12,11 @@ def get_chat_history_by_id(session: Session, chat_id: int) -> ChatHistory | None
     result = session.exec(statement).first()
     return result
 
+def get_user_chat_histories(session: Session, user_id: int) -> list[ChatHistory]:
+    statement = select(ChatHistory).where(ChatHistory.sender_id == user_id)
+    result = session.exec(statement).all()
+    return result
+
 def get_all_chat_histories(session: Session) -> list[ChatHistory]:
     statement = select(ChatHistory)
     result = session.exec(statement).all()

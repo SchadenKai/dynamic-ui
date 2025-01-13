@@ -1,11 +1,8 @@
 import openai
 
-from app.core.openai_config import client
+from app.core.openai_config import openai_client
 
-tools = [
-        {
-          "type": "function",
-          "function": {
+generate_ui_tool = {
             "name": "generate_ui",
             "description": "Generate UI for React Application",
             "parameters": {
@@ -46,18 +43,16 @@ tools = [
                 }
               },
             }
-          }
         }
-    ]; 
 
 
 def generate_ui(user_input: str):
-    completion = client.chat.completions.create(
+    completion = openai_client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are a UI generator AI for a ReactJS application. Make use of the `generate_ui` function to Convert the user input into a UI that is compatible to ReactJS. Also remember to make each UI being generated as complete as possible based on the request of the user."},
             {"role": "user", "content": f"{user_input}"}
         ],
-        tools=tools
+        tools=[generate_ui_tool]
     )
     return completion.choices[0].message.tool_calls if completion.choices[0].message.tool_calls else completion.choices[0].message.content
