@@ -1,10 +1,60 @@
-from fastapi import APIRouter
-from app.db.generate_dummy_data import generate_dummy_data
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session
+from app.db.session import get_session
+from app.services.user import create_user, get_user_by_id, get_all_users, delete_user
+from app.services.session import create_session_token, delete_session_token, is_token_valid
+from app.api.v1.schemas.user import UsersCreate, UsersBase
+from app.db.models.user import Users
+import uuid
+import secrets
 
 router = APIRouter(prefix="/user", tags=["/user"])
 
-@router.post("/generate-dummy-data")
-def generate_dummy_data_endpoint():
-    print("Generating dummy data")
-    generate_dummy_data()
-    return {"message": "Dummy data generated successfully!"}
+@router.post("/signup")
+def signup(user: UsersCreate, db_session: Session = Depends(get_session)):
+    new_user = Users(**user.model_dump())
+    created_user = create_user(db_session, new_user)
+    return created_user
+
+@router.post("/login")
+def login(email: str, password: str, db_session: Session = Depends(get_session)):
+    users = get_all_users(db_session)
+    for user in users:
+        if user.email == email and user.password_hash == password:
+            token = secrets.token_hex(16)
+            create_session_token(db_session, user.user_id, token)
+            return {"message": "Login successful", "token": token}
+    raise HTTPException(status_code=400, detail="Invalid email or password")
+
+@router.post("/logout")
+def logout(token: str, db_session: Session = Depends(get_session)):
+    success = delete_session_token(db_session, token)
+    if not success:
+        raise HTTPException(status_code=404, detail="Session token not found")
+    return {"message": "Logout successful"}
+
+@router.get("/{user_id}")
+def read_user(user_id: uuid.UUID, token: str, db_session: Session = Depends(get_session)):
+    if not is_token_valid(db_session, token):
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    user = get_user_by_id(db_session, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@router.get("/")
+def read_users(token: str, db_session: Session = Depends(get_session)):
+    if not is_token_valid(db_session, token):
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    users = get_all_users(db_session)
+    return users
+
+@router.delete("/{user_id}")
+def delete_user_endpoint(user_id: uuid.UUID, token: str, db_session: Session = Depends(get_session)):
+    if not is_token_valid(db_session, token):
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    success = delete_user(db_session, user_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}
+

@@ -8,6 +8,9 @@ from sqlmodel import SQLModel
 
 from app.db.session import build_connection_string
 from app.db.models.user import Users
+from app.db.models.chat import ChatHistory
+from app.db.models.session import SessionToken
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
