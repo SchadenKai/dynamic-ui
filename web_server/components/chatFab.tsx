@@ -21,7 +21,7 @@ export default function ChatFab({
   const [chatHistory, setChatHistory] = useState([]);
   useEffect(() => {
     const chatMessages = fetch(
-      "http://localhost:8000/chat/history?token=3fbdb3634ff0f1fa02b9d6629136ff4e",
+      "http://localhost:8000/chat/history?token=4671d4f17ff09c755d9fd9438745f2c4",
       {
         headers: {
           "Content-Type": "application/json",

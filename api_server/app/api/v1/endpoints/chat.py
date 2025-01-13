@@ -46,7 +46,10 @@ async def create_chat_session_endpoint(request: ChatCreate, current_user: Users 
         chat_messages = [{"role": chat.role.value, "content": chat.message} for chat in chat_message_history]
         response = openai_client.chat.completions.create(
             model="gpt-4o",
-            messages=chat_messages,
+            messages=[
+                {"role": "system", "content": "You are a dynamic UI generator where in you will be retrieving data from the database by generating SQL queries using `generate_sql_query_tool` and then you will be generating a UI that is compatible with React.js using `generate_ui_tool`."},
+                *chat_messages
+            ],
             functions=[generate_sql_query_tool, generate_ui_tool],
             function_call="auto"
         )

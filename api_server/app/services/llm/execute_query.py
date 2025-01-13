@@ -34,7 +34,7 @@ def execute_query(query: str, params: dict = None):
 
 generate_sql_query_tool = {
     "name": "generate_sql_query",
-    "description": "Generate an SQL query and parameters based on user request.",
+    "description": "Generate an accurate SQL query and parameters based on user human readable request.",
     "parameters": {
         "type": "object",
         "properties": {
