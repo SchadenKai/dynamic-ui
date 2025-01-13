@@ -86,7 +86,11 @@ async def create_chat_session_endpoint(request: ChatCreate, current_user: Users 
             break
     return
              
-
+@router.get("/latest-message")
+async def get_latest_message(current_user: Users = Depends(get_current_user) ,db_session: Session = Depends(get_session)):
+    chat_history = get_user_chat_histories(db_session, current_user.user_id)
+    latest_message = chat_history[-1]
+    return latest_message
 
 @router.post("/execute-query")
 async def execute_query_endpoint(user_input: str):

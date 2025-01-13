@@ -12,7 +12,7 @@ export interface GenerateUIRequest {
 }
 
 export const generateUISS = async (data: GenerateUIRequest): Promise<GenerateUIResponse | string | null> => {
-    const res = await fetch('http://localhost:8000/chat/generate-ui', {
+    const res = await fetch('http://localhost:8000/chat/send-message?token=3fbdb3634ff0f1fa02b9d6629136ff4e', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

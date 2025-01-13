@@ -2,7 +2,6 @@ import { parseGenerateUIFuncArgs } from "@/lib/parseGenerateUIFuncArgs";
 import { generateUISS } from "@/services/generateUISS";
 import { DynamicElement } from "@/types/renderElements";
 import React, { useState } from "react";
-import useLocalStorage from "./use-local-storage";
 
 function parseAttributes(
   attributes: { name: string; value: string }[] | undefined
@@ -21,7 +20,10 @@ function parseAttributes(
   return parsedAttributes;
 }
 
-export function renderElement(element: DynamicElement, idx?: number): React.ReactNode {
+export function renderElement(
+  element: DynamicElement,
+  idx?: number
+): React.ReactNode {
   const { type, label, children, attributes } = element;
 
   attributes?.push({ name: "key", value: idx?.toString() ?? "" });
@@ -59,7 +61,6 @@ export function renderElement(element: DynamicElement, idx?: number): React.Reac
 }
 
 interface GenerateUIHook {
-  dynamicElement: React.ReactNode;
   handleGenerateUI: () => void;
   isLoading: boolean;
   rawOutput: DynamicElement | null;
@@ -67,8 +68,6 @@ interface GenerateUIHook {
 }
 
 export function useGenerateUI(user_query: string): GenerateUIHook {
-  const [dynamicElement, setDynamicElement] = useState<React.ReactNode>(null);
-  const [rawResponse, setRawResponse] = useLocalStorage("rawResponse", "");
   const [rawOutput, setRawOutput] = useState<DynamicElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorAIMessage, setErrorAIMessage] = useState("");
@@ -78,12 +77,10 @@ export function useGenerateUI(user_query: string): GenerateUIHook {
       setIsLoading(true);
       const data = { user_input: user_query };
       const res = await generateUISS(data);
-      setRawResponse(JSON.stringify(res));
       if (typeof res !== "string" && res) {
         const parsedFuncArgs = parseGenerateUIFuncArgs(res.function.arguments);
         if (parsedFuncArgs) {
           setRawOutput(parsedFuncArgs);
-          setDynamicElement(renderElement(parsedFuncArgs));
         }
       } else if (typeof res === "string") {
         setErrorAIMessage(res);
@@ -93,7 +90,6 @@ export function useGenerateUI(user_query: string): GenerateUIHook {
     generateUI();
   };
   return {
-    dynamicElement,
     handleGenerateUI,
     isLoading,
     rawOutput,

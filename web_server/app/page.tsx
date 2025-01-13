@@ -2,15 +2,12 @@
 
 import ChatFab from "@/components/chatFab";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useGenerateUI } from "@/hooks/use-generate-ui";
-import useLocalStorage from "@/hooks/use-local-storage";
-import React from "react";
-
+import { renderElement, useGenerateUI } from "@/hooks/use-generate-ui";
+import React, { useState } from "react";
 
 export default function Home() {
-  const [userQuery, setUserQuery] = useLocalStorage("userQuery", "");
+  const [userQuery, setUserQuery] = useState("");
   const {
-    dynamicElement,
     handleGenerateUI,
     isLoading,
     rawOutput,
@@ -46,7 +43,7 @@ export default function Home() {
           <Card className="max-w-1/2 w-full">
             <CardHeader>Component Rendered</CardHeader>
             <CardContent className="border border-gray-200 p-4 w-full">
-              {dynamicElement}
+              {rawOutput ? renderElement(rawOutput) : errorAIMessage}
             </CardContent>
           </Card>
         </div>
