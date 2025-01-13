@@ -4,7 +4,6 @@ from app.db.session import get_session
 from app.services.execute_query import execute_query, generate_query_from_prompt
 from app.api.v1.schemas.generate_ui import GenerateUISchema
 from app.services.dynamic_ui import generate_ui
-from app.services.get_weather import get_current_weather
 
 router = APIRouter(prefix="/chat", tags=["/chat"])
 
