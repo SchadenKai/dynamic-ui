@@ -16,6 +16,7 @@ from app.services.llm.execute_query import generate_sql_query_tool
 
 router = APIRouter(prefix="/chat", tags=["/chat"])
 
+
 @router.post("/generate-ui")
 async def generate_ui_endpoint(request: GenerateUISchema):
     function = generate_ui(request.user_input) 
@@ -97,7 +98,8 @@ async def create_chat_session_endpoint(request: ChatCreate, current_user: Users 
 @router.get("/latest-message")
 async def get_latest_message(current_user: Users = Depends(get_current_user) ,db_session: Session = Depends(get_session)):
     chat_history = get_user_chat_histories(db_session, current_user.user_id)
-    latest_message = chat_history[-1]
+    sort_by_chat_id = sorted(chat_history, key=lambda x: x.chat_id)
+    latest_message = sort_by_chat_id[-1]
     return latest_message
 
 @router.post("/execute-query")
