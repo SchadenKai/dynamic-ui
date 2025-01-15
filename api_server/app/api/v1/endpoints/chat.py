@@ -32,6 +32,11 @@ async def get_chat_history(current_user: Users = Depends(get_current_user) ,db_s
     chat_history = get_user_chat_histories(db_session, current_user.user_id)
     return chat_history
 
+_SYSTEM_PROMPT = """
+You are a dynamic UI generator where in you will be retrieving data from the database by generating SQL queries using `generate_sql_query_tool` and then you will be generating a UI that is compatible with React.js using `generate_ui_tool`.
+Every after you generated and SQL query and returned the data from the database, already move on to the next step which would be generating the UI definition by using the `generate_ui_tool` function call. Do not forget to make the UI as complete as possible based on the request of the user.
+Also do not repeat the same SQL query and UI generation process to avoid redundancy of prompts and responses.
+"""
 
 @router.post("/send-message")
 async def create_chat_session_endpoint(request: ChatCreate, current_user: Users = Depends(get_current_user), db_session: Session = Depends(get_session)):
@@ -47,7 +52,7 @@ async def create_chat_session_endpoint(request: ChatCreate, current_user: Users 
         response = openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a dynamic UI generator where in you will be retrieving data from the database by generating SQL queries using `generate_sql_query_tool` and then you will be generating a UI that is compatible with React.js using `generate_ui_tool`."},
+                {"role": "system", "content": _SYSTEM_PROMPT},
                 *chat_messages
             ],
             functions=[generate_sql_query_tool, generate_ui_tool],
