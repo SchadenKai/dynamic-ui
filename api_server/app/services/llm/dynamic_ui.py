@@ -4,7 +4,7 @@ from app.core.openai_config import openai_client
 
 generate_ui_tool = {
             "name": "generate_ui",
-            "description": "Generate UI for React Application through generating a JSON object that represents the UI",
+            "description": "Generate UI for React Application through generating a JSON object that represents the UI.",
             "parameters": {
               "type": "object",
               "properties": {

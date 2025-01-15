@@ -34,7 +34,7 @@ def execute_query(query: str, params: dict = None):
 
 generate_sql_query_tool = {
     "name": "generate_sql_query",
-    "description": "Generate an accurate SQL query and parameters based on user human readable request.",
+    "description": "Generate an accurate SQL query and parameters based on user human readable request. If the query is already an returned result coming from the role of the system, call the next function which is the `generate_ui`",
     "parameters": {
         "type": "object",
         "properties": {
