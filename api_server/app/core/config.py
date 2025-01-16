@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     openai_key: str = Field(validation_alias="openai_key")
+    deepseek_ai_key: str = Field(validation_alias="deepseek_ai_key")
     postgres_user: str = Field(validation_alias="postgres_user")
     postgres_password: str = Field(validation_alias="postgres_password")
     postgres_host: str = Field(validation_alias="postgres_host")
