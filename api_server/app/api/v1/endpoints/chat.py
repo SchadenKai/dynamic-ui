@@ -10,7 +10,7 @@ from app.db.session import get_session
 from app.services.llm.execute_query import execute_query, generate_query_from_prompt
 from app.api.v1.schemas.generate_ui import GenerateUISchema
 from app.services.llm.dynamic_ui import generate_ui
-from app.core.openai_config import openai_client
+from app.core.openai_config import openai_client, deepseek_chat_client
 from app.services.llm.dynamic_ui import generate_ui_tool
 from app.services.llm.execute_query import generate_sql_query_tool
 
@@ -31,7 +31,8 @@ async def generate_ui_endpoint(request: GenerateUISchema):
 @router.get("/history")
 async def get_chat_history(current_user: Users = Depends(get_current_user) ,db_session: Session = Depends(get_session)):
     chat_history = get_user_chat_histories(db_session, current_user.user_id)
-    return chat_history
+    sort_by_chat_id = sorted(chat_history, key=lambda x: x.chat_id)
+    return sort_by_chat_id
 
 _SYSTEM_PROMPT = """
 You are a dynamic UI generator where in you will be retrieving data from the database by generating SQL queries using `generate_sql_query_tool` and then you will be generating a UI that is compatible with React.js using `generate_ui_tool`.
