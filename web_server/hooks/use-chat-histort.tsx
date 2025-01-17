@@ -1,6 +1,6 @@
 import { parseGenerateUIFuncArgs } from "@/lib/parseGenerateUIFuncArgs";
+import { parseElement } from "@/lib/renderElement";
 import { ChatMessage } from "@/types/chat";
-import { renderElement } from "@/utils/renderElement";
 import { useEffect, useState } from "react";
 
 interface ChatHistoryHook {
@@ -22,7 +22,7 @@ export default function useChatHistory(): ChatHistoryHook {
     const chatMessages = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/chat/history?token=f1e8af4de1f4430b107d786fb0b6b7d4",
+          "http://localhost:8000/chat/history?token=d440c25e3ccf9c939fc5f84465e04fde",
           {
             headers: {
               "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export default function useChatHistory(): ChatHistoryHook {
           const lastMessage = data[data.length - 1].message;
           if (lastMessage.includes("[")) {
             const args = parseGenerateUIFuncArgs(lastMessage);
-            setRenderedContent(renderElement(args));
+            setRenderedContent(parseElement(args));
           } else {
             setRenderedContent(<p>{JSON.stringify(lastMessage)}</p>);
           }

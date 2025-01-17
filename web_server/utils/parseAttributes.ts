@@ -1,17 +1,12 @@
-export function parseAttributes(
-    attributes: { name: string; value: string }[] | undefined
-  ): { name: string; value: unknown }[] {
-    const parsedAttributes: { name: string; value: unknown }[] = [];
-  
-    attributes?.forEach(({ name, value }) => {
-      // Convert onClick or any stringified function to an actual function
-      if (name.startsWith("on") && typeof value === "string") {
-        parsedAttributes.push({ name, value: new Function(`return ${value}`)() });
-      } else {
-        parsedAttributes.push({ name, value });
-      }
-    });
-  
-    return parsedAttributes;
+import { Attribute } from "@/types/renderElements";
+
+export function parseAttributes(attributes: Attribute | Attribute[] | undefined): Attribute {
+  if (!attributes) return {};
+
+  // Combine array of attributes into a single object
+  if (Array.isArray(attributes)) {
+    return attributes.reduce((acc, attr) => ({ ...acc, ...attr }), {});
   }
-  
+
+  return attributes;
+}

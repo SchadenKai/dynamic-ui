@@ -1,6 +1,8 @@
+export type Attribute = { [key: string]: unknown };
+
 export interface DynamicElement {
   type: string;
   label?: string;
   children?: DynamicElement[];
-  attributes?: { name: string; value: string }[];
+  attributes?: Attribute | Attribute[];
 }
