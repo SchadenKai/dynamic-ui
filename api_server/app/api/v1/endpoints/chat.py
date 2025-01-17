@@ -1,5 +1,6 @@
 import json
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from sqlmodel import Session
 from app.db.models.chat import ChatHistory
 from app.services.chat import create_chat_history, get_all_chat_histories, get_user_chat_histories
@@ -10,8 +11,8 @@ from app.db.session import get_session
 from app.services.llm.execute_query import execute_query, generate_query_from_prompt
 from app.api.v1.schemas.generate_ui import GenerateUISchema
 from app.services.llm.dynamic_ui import generate_ui
-from app.core.openai_config import openai_client, deepseek_chat_client
-from app.services.llm.dynamic_ui import generate_ui_tool
+from app.core.agent_config import openai_client, deepseek_chat_client
+from app.services.llm.dynamic_ui import generate_ui_tool, ui_json_generator_agent
 from app.services.llm.execute_query import generate_sql_query_tool
 
 router = APIRouter(prefix="/chat", tags=["/chat"])
@@ -27,7 +28,14 @@ async def generate_ui_endpoint(request: GenerateUISchema):
         print("Function has been called")   
     return function
 
+class ChatCreateBase(BaseModel):
+    message: str
 
+@router.post("/llm/health")
+async def get_llm_health(request: ChatCreateBase):
+    response = await ui_json_generator_agent(request.message)
+    return response
+    
 @router.get("/history")
 async def get_chat_history(current_user: Users = Depends(get_current_user) ,db_session: Session = Depends(get_session)):
     chat_history = get_user_chat_histories(db_session, current_user.user_id)

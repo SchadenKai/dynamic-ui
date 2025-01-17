@@ -1,14 +1,16 @@
-from langchain_ollama import OllamaLLM
+from pydantic_ai import Agent
+from pydantic_ai.models.groq import GroqModel
+from pydantic_ai.models.ollama import OllamaModel
 
-llm = OllamaLLM(model="llama3.1")
-response = llm.invoke("The first man on the moon was ...")
-print(response)
+ollama = OllamaModel("")
+deepseek = GroqModel("")
+agent = Agent(  
+    'gemini-1.5-flash',
+    system_prompt='Be concise, reply with one sentence.',  
+)
 
-
-
-from langchain_core.tools import tool
-
-@tool
-def multiply(a: int, b: int) -> int:
-    """Multiply a and b."""
-    return a * b
+result = agent.run_sync('Where does "hello world" come from?')  
+print(result.data)
+"""
+The first known use of "hello, world" was in a 1974 textbook about the C programming language.
+"""

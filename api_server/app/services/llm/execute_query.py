@@ -2,7 +2,7 @@ import json
 from sqlalchemy import text
 from sqlmodel import Session
 from app.db.session import get_sqlalchemy_engine
-from app.core.openai_config import openai_client
+from app.core.agent_config import openai_client
 
 
 def execute_query(query: str, params: dict = None):
