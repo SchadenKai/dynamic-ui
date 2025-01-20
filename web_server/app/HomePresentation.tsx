@@ -22,12 +22,16 @@ const HomePresentation: React.FC<HomePresentationProps> = ({
 }) => {
   const [isChatOpen, setIsChatOpen] = useState(true);
   return (
-    <div>
-      <Card>
-        <CardContent>
-          {isLoading ? <p>Loading...</p> : renderedContent}
-        </CardContent>
-      </Card>
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      <div className="w-full h-full p-6">
+        {isLoading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <p>Loading...</p>
+          </div>
+        ) : (
+          renderedContent
+        )}
+      </div>
       <ChatFab
         userQuery={userQuery}
         setUserQuery={setUserQuery}

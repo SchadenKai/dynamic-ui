@@ -1,4 +1,4 @@
-import { LucideBot, LucidePanelRightClose } from "lucide-react";
+import { LucideBot, LucideMinimize, LucideMinimize2, LucidePanelRightClose } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
@@ -27,13 +27,13 @@ export default function ChatFab({
     <>
       {isOpen ? (
         <Card className="max-w-[600px] max-h-screen absolute bottom-4 right-4 px-4 py-6">
-          <CardHeader className="flex flex-row justify-between items-center gap-2">
-            <p className="flex flex-row items-center justify-center gap-2">
+          <CardHeader className="flex flex-row justify-between  items-center gap-2">
+            <p className="flex flex-row items-center justify-center gap-2 m-0">
               <LucideBot size={32} />
               <span>Dynamic UI Bot</span>
             </p>
-            <Button onClick={() => setIsOpen(false)}>
-              <LucidePanelRightClose />
+            <Button className="!mt-0" onClick={() => setIsOpen(false)}>
+              <LucideMinimize2 />
             </Button>
           </CardHeader>
           <CardContent className="overflow-y-auto w-full max-h-96 flex flex-col gap-2">
@@ -62,7 +62,12 @@ export default function ChatFab({
           </CardFooter>
         </Card>
       ) : (
-        <Button className="absolute bottom-4 right-4" onClick={() => setIsOpen(true)}>Chat</Button>
+        <Button
+          className="absolute bottom-4 right-4 rounded-full"
+          onClick={() => setIsOpen(true)}
+        >
+          <LucideBot />
+        </Button>
       )}
     </>
   );
