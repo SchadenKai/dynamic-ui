@@ -2,13 +2,14 @@ import json
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import Session
+from app.services.llm.general import template_json_generator
 from app.db.models.chat import ChatHistory
 from app.services.chat import create_chat_history, get_all_chat_histories, get_user_chat_histories
 from app.api.v1.schemas.chat import ChatCreate, ChatHistoryCreate
 from app.api.dependencies import get_current_user
 from app.db.models.user import Users
 from app.db.session import get_session
-from app.services.llm.execute_query import execute_query, generate_query_from_prompt
+from app.services.llm.execute_query import execute_query, generate_query_from_prompt, sql_generator_agent
 from app.api.v1.schemas.generate_ui import GenerateUISchema
 from app.services.llm.dynamic_ui import generate_ui
 from app.core.agent_config import openai_client, deepseek_chat_client
@@ -35,7 +36,29 @@ class ChatCreateBase(BaseModel):
 async def get_llm_health(request: ChatCreateBase):
     response = await ui_json_generator_agent(request.message)
     return response
-    
+
+@router.post("/llm/retrieve-data")
+async def get_llm_retrieve_data(request: ChatCreateBase):
+    response = await sql_generator_agent(request.message)
+    return response
+
+@router.post("/llm/simple-generate-ui")
+async def simple_generate_ui(request: ChatCreateBase, current_user: Users = Depends(get_current_user), db_session: Session = Depends(get_session)):
+    new_chat_message = ChatHistory(
+        sender_id=current_user.user_id,
+        message=request.message,
+        role="user"
+    )
+    create_chat_history(db_session, new_chat_message)
+    response = await template_json_generator(request.message)
+    new_chat_message = ChatHistory(
+        sender_id=current_user.user_id,
+        message=str(response.model_dump_json()),
+        role="system"
+    )
+    create_chat_history(db_session, new_chat_message)
+    return response
+
 @router.get("/history")
 async def get_chat_history(current_user: Users = Depends(get_current_user) ,db_session: Session = Depends(get_session)):
     chat_history = get_user_chat_histories(db_session, current_user.user_id)

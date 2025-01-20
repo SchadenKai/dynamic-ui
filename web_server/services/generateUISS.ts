@@ -33,7 +33,7 @@ export const sendChatMessage = async (
   data: GenerateUIRequest
 ): Promise<GenerateUIResponse | string | null> => {
   const res = await fetch(
-    "http://localhost:8000/chat/send-message?token=d440c25e3ccf9c939fc5f84465e04fde",
+    "http://localhost:8000/chat/send-message?token=e3556f6962eb05b6e99616c92d020869",
     {
       method: "POST",
       headers: {

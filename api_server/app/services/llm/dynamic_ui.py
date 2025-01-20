@@ -170,8 +170,6 @@ class UIJsonBase(BaseModel):
     children: list[dict] = Field(default=[], description="The children elements of the element. The schema of this is a list of recursive on itself.")
     attributes: list[dict] = Field(default=[], description="The attributes of the element for example on click event for a button, type of inputs, etc.")
 
-class Testing(BaseModel):
-    response: list[dict]
 
 async def ui_json_generator_agent(user_input: str):
   agent = Agent(

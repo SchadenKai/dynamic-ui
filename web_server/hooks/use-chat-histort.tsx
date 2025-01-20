@@ -22,7 +22,7 @@ export default function useChatHistory(): ChatHistoryHook {
     const chatMessages = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/chat/history?token=d440c25e3ccf9c939fc5f84465e04fde",
+          "http://localhost:8000/chat/history?token=e3556f6962eb05b6e99616c92d020869",
           {
             headers: {
               "Content-Type": "application/json",
@@ -34,6 +34,7 @@ export default function useChatHistory(): ChatHistoryHook {
         if (data.length > 0) {
           const lastMessage = data[data.length - 1].message;
           if (lastMessage.includes("[")) {
+            console.info("lastMessage", lastMessage);
             const args = parseGenerateUIFuncArgs(lastMessage);
             setRenderedContent(parseElement(args));
           } else {
