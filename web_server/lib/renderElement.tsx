@@ -1,6 +1,6 @@
+import React from "react";
 import { DynamicElement } from "@/types/renderElements";
 import { parseAttributes } from "@/utils/parseAttributes";
-import React from "react";
 
 const _VOID_ELEMENTS = new Set([
   "area",
@@ -21,6 +21,11 @@ const _VOID_ELEMENTS = new Set([
 export function parseElement(elementData: DynamicElement): React.ReactNode {
   const { type, attributes, children, label } = elementData;
 
+  if (!type || typeof type !== "string") {
+    console.warn("Invalid type for element:", elementData);
+    return null;
+  }
+
   // Parse attributes
   const parsedAttributes = parseAttributes(attributes);
 
@@ -30,17 +35,15 @@ export function parseElement(elementData: DynamicElement): React.ReactNode {
   }
 
   // Parse children recursively
-  const parsedChildren = (children || []).map((child, index) => (
-    <React.Fragment key={index}>{parseElement(child)}</React.Fragment>
-  ));
+  const parsedChildren = (children || []).map((child, index) => {
+    return <React.Fragment key={index}>{parseElement(child)}</React.Fragment>;
+  });
 
-  // Add label as a child if available (for non-void elements)
+  // Add label if provided
   if (label) {
-    parsedChildren.unshift(
-      <React.Fragment key="label">{label}</React.Fragment>
-    );
+    parsedChildren.unshift(<span key="label">{label}</span>);
   }
 
-  // Return the React element
+  // Return React element
   return React.createElement(type, parsedAttributes, parsedChildren);
 }

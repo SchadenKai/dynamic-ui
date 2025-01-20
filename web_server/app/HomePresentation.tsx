@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import ChatFab from "@/components/chatFab";
 import { ChatMessage } from "@/types/chat";
 
