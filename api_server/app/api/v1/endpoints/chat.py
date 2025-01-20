@@ -50,20 +50,28 @@ async def simple_generate_ui(request: ChatCreateBase, current_user: Users = Depe
         role="user"
     )
     create_chat_history(db_session, new_chat_message)
-    response = await template_json_generator(request.message)
+    
+    # raw data in list of dictionaries format
+    raw_data_retrieved = await sql_generator_agent(request.message)
+    print(f"Raw data retrieved: {str(raw_data_retrieved)}")
+    template_json_response = await ui_json_generator_agent(f"User request: {request.message}. Raw data: {str(raw_data_retrieved)}.")
+    
     new_chat_message = ChatHistory(
         sender_id=current_user.user_id,
-        message=str(response.model_dump_json()),
+        message=str(template_json_response.model_dump_json()),
         role="system"
     )
     create_chat_history(db_session, new_chat_message)
-    return response
+    return template_json_response
 
 @router.get("/history")
 async def get_chat_history(current_user: Users = Depends(get_current_user) ,db_session: Session = Depends(get_session)):
     chat_history = get_user_chat_histories(db_session, current_user.user_id)
     sort_by_chat_id = sorted(chat_history, key=lambda x: x.chat_id)
     return sort_by_chat_id
+
+
+
 
 _SYSTEM_PROMPT = """
 You are a dynamic UI generator where in you will be retrieving data from the database by generating SQL queries using `generate_sql_query_tool` and then you will be generating a UI that is compatible with React.js using `generate_ui_tool`.

@@ -181,7 +181,7 @@ async def ui_json_generator_agent(user_input: str):
       "Your job is to generate a UI that is compatible with ReactJS based on the user's request.",
       "Make sure to generate a complete UI based on the user's request.",
       "Also make sure that the final results is structured based on the defined return type schema.",
-      "If not, regenerate it until it is structured based on the defined return type schema."
+      "If not, regenerate it until it is structured based on the defined return type schema.",
     )
   )
   result = await agent.run(user_input)
