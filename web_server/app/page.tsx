@@ -7,9 +7,10 @@ import useChatHistory from "@/hooks/use-chat-histort";
 
 export default function Home() {
   const [userQuery, setUserQuery] = useState("");
-  const { handleGenerateUI, isLoading } = useGenerateUI(userQuery);
-  const { chatHistory, refreshChatHistory, renderedContent } = useChatHistory();
-  
+  const { handleGenerateUI, isLoading, renderedContent } =
+    useGenerateUI(userQuery);
+  const { chatHistory, refreshChatHistory, renderedContentHistory } =
+    useChatHistory();
 
   useEffect(() => {
     refreshChatHistory();
@@ -21,7 +22,7 @@ export default function Home() {
       setUserQuery={setUserQuery}
       handleGenerateUI={handleGenerateUI}
       isLoading={isLoading}
-      renderedContent={renderedContent}
+      renderedContent={renderedContent || renderedContentHistory}
       chatHistory={chatHistory}
     />
   );

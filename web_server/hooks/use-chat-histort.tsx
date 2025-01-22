@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 interface ChatHistoryHook {
   chatHistory: ChatMessage[];
   refreshChatHistory: () => void;
-  renderedContent: React.ReactNode | null;
+  renderedContentHistory: React.ReactNode | null;
 }
 
 export default function useChatHistory(): ChatHistoryHook {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const [renderedContent, setRenderedContent] =
+  const [renderedContentHistory, setRenderedContentHistory] =
     useState<React.ReactNode | null>(null);
 
   useEffect(() => {
@@ -36,9 +36,9 @@ export default function useChatHistory(): ChatHistoryHook {
           if (lastMessage.includes("[")) {
             console.info("lastMessage", lastMessage);
             const args = parseGenerateUIFuncArgs(lastMessage);
-            setRenderedContent(parseElement(args));
+            setRenderedContentHistory(parseElement(args));
           } else {
-            setRenderedContent(<p>{JSON.stringify(lastMessage)}</p>);
+            setRenderedContentHistory(<p>{JSON.stringify(lastMessage)}</p>);
           }
         }
       } catch (error) {
@@ -51,6 +51,6 @@ export default function useChatHistory(): ChatHistoryHook {
   return {
     chatHistory,
     refreshChatHistory,
-    renderedContent,
+    renderedContentHistory,
   };
 }

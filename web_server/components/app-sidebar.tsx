@@ -18,7 +18,7 @@ const items = [
   },
   {
     title: "Retrieve Data",
-    url: "/test1",
+    url: "/retrieve-data",
     icon: Inbox,
   },
   {

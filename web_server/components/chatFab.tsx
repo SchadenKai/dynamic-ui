@@ -1,8 +1,14 @@
-import { LucideBot, LucideMinimize, LucideMinimize2, LucidePanelRightClose } from "lucide-react";
+import {
+  LucideBot,
+  LucideMinimize,
+  LucideMinimize2,
+  LucidePanelRightClose,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 import { ChatMessage } from "@/types/chat";
+import { useEffect, useRef } from "react";
 
 interface ChatFabProps {
   readonly userQuery: string;
@@ -23,6 +29,12 @@ export default function ChatFab({
   isOpen,
   setIsOpen,
 }: ChatFabProps) {
+  const latestMessageRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (latestMessageRef.current) {
+      latestMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatHistory]);
   return (
     <>
       {isOpen ? (
@@ -37,9 +49,10 @@ export default function ChatFab({
             </Button>
           </CardHeader>
           <CardContent className="overflow-y-auto w-full max-h-96 flex flex-col gap-2">
-            {chatHistory.map((chat: ChatMessage) => (
+            {chatHistory.map((chat: ChatMessage, index: number) => (
               <div
                 key={chat.chat_id}
+                ref={index === chatHistory.length - 1 ? latestMessageRef : null}
                 className="bg-slate-200 border-black-500 rounded-md py-4 px-4 h-auto w-full grid grid-cols-2 gap-2"
               >
                 <span className="max-w-4">{chat.role}</span>

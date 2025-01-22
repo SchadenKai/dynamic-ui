@@ -11,9 +11,9 @@ from app.db.models.user import Users
 from app.db.session import get_session
 from app.services.llm.execute_query import execute_query, generate_query_from_prompt, sql_generator_agent
 from app.api.v1.schemas.generate_ui import GenerateUISchema
-from app.services.llm.dynamic_ui import generate_ui
+from app.services.llm.dynamic_ui import generate_ui, multi_uijson_generator_agent
 from app.core.agent_config import openai_client, deepseek_chat_client
-from app.services.llm.dynamic_ui import generate_ui_tool, ui_json_generator_agent
+from app.services.llm.dynamic_ui import ui_json_generator_agent
 from app.services.llm.execute_query import generate_sql_query_tool
 
 router = APIRouter(prefix="/chat", tags=["/chat"])
@@ -53,8 +53,17 @@ async def simple_generate_ui(request: ChatCreateBase, current_user: Users = Depe
     
     # raw data in list of dictionaries format
     raw_data_retrieved = await sql_generator_agent(request.message)
+    
+    new_chat_message = ChatHistory(
+        sender_id=current_user.user_id,
+        message=str(raw_data_retrieved),
+        role="system"
+    )
+    create_chat_history(db_session, new_chat_message)
+    
+    
     print(f"Raw data retrieved: {str(raw_data_retrieved)}")
-    template_json_response = await ui_json_generator_agent(f"User request: {request.message}. Raw data: {str(raw_data_retrieved)}.")
+    template_json_response = await multi_uijson_generator_agent(raw_data=raw_data_retrieved, user_input=request.message)
     
     new_chat_message = ChatHistory(
         sender_id=current_user.user_id,

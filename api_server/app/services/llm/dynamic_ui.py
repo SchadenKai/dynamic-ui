@@ -1,112 +1,11 @@
 from __future__ import annotations
 from typing import List
 import openai
-from pydantic_ai import Agent
+from pydantic_ai import Agent, Tool
 from pydantic import Field
 from enum import Enum
 from pydantic import BaseModel
 from app.core.agent_config import openai_client, deepseek_chat_client, groq_model
-
-generate_ui_tool ={
-              "name": "generate_ui",
-            "description": "Generate UI for React Application through generating a JSON object that represents the UI.",
-            "parameters": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum":["div", "button", "header", "section", "input", "form", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td", "img", "span", "nav", "footer", "article", "aside", "main", "figure", "figcaption", "blockquote", "pre", "code", "label", "textarea", "select", "option", "iframe", "canvas", "video", "audio", "source", "link", "meta", "style", "script"],
-                  "description": "The type of the element to be generated"
-                },
-                "label":{
-                    "type":"string",
-                    "description": "The text content of the element"
-                },
-                "children": {
-                    "type": "array",
-                    "description": "The children elements of the element",
-                    "items": {
-                       "$ref": "#",
-                     }
-                },
-                "attributes":{
-                    "type": "array", 
-                    "description": "The attributes of the element for example on click event for a button, type of inputs, etc.",
-                    "items": {
-                        "$ref": "#/$defs/attribute" 
-                     }
-                }
-              },
-              "required": ["type"],
-              "$defs": {
-                "attribute": {
-                    "type": "object",
-                    "properties":{
-                        "name": { "type": "string"},
-                        "value": {"type":"string"}
-                   }
-                }
-              },
-            }
-            }
-
-generate_ui_tool_deepseek = {
-            "type": "function",
-            "function": {
-              "name": "generate_ui",
-            "description": "Generate UI for React Application through generating a JSON object that represents the UI.",
-            "parameters": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum":["div", "button", "header", "section", "input", "form", "legend", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td", "img", "span", "nav", "footer", "article", "aside", "main", "figure", "figcaption", "blockquote", "pre", "code", "label", "textarea", "select", "option", "iframe", "canvas", "video", "audio", "source", "link", "meta", "style", "script"],
-                  "description": "The type of the element to be generated"
-                },
-                "label":{
-                    "type":"string",
-                    "description": "The text content of the element"
-                },
-                "children": {
-                    "type": "array",
-                    "description": "The children elements of the element",
-                    "items": {
-                       "$ref": "#",
-                     }
-                },
-                "attributes":{
-                    "type": "array", 
-                    "description": "The attributes of the element for example on click event for a button, type of inputs, etc.",
-                    "items": {
-                        "$ref": "#/$defs/attribute" 
-                     }
-                }
-              },
-              "required": ["type"],
-              "$defs": {
-                "attribute": {
-                    "type": "object",
-                    "properties":{
-                        "name": { "type": "string"},
-                        "value": {"type":"string"}
-                   }
-                }
-              },
-            }
-            }
-        }
-
-
-def generate_ui(user_input: str):
-    completion = deepseek_chat_client.chat.completions.create(
-        model="deepseek-chat",
-        messages=[
-            {"role": "system", "content": "You are a UI generator AI for a ReactJS application. Make use of the `generate_ui` function to Convert the user input into a UI that is compatible to ReactJS. Also remember to make each UI being generated as complete as possible based on the request of the user."},
-            {"role": "user", "content": f"{user_input}"}
-        ],
-        tools=[generate_ui_tool]
-    )
-    return completion.choices[0].message.tool_calls if completion.choices[0].message.tool_calls else completion.choices[0].message.content
   
 class TypeEnum(str, Enum):
     DIV = "div"
@@ -166,7 +65,7 @@ class Attribute(BaseModel):
 
 class UIJsonBase(BaseModel):
     type: TypeEnum
-    label: str
+    label: str = Field(default="", description="This is where the raw data will be displayed. Use this in best practices to display the raw data.")
     children: list[dict] = Field(default=[], description="The children elements of the element. The schema of this is a list of recursive on itself.")
     attributes: list[dict] = Field(default=[], description="The attributes of the element for example on click event for a button, type of inputs, etc.")
 
@@ -181,8 +80,57 @@ async def ui_json_generator_agent(user_input: str):
       "Your job is to generate a UI that is compatible with ReactJS based on the user's request.",
       "Make sure to generate a complete UI based on the user's request.",
       "Also make sure that the final results is structured based on the defined return type schema.",
+      "If the user request more than one UI, generate this inside a div element."
       "If not, regenerate it until it is structured based on the defined return type schema.",
     )
   )
   result = await agent.run(user_input)
+  return result.data
+
+
+class DisplayUIEnum(str, Enum):
+    TABLE = "table"
+    LIST = "li"
+    PARAGRAPH = "p"
+
+async def generate_ui(raw_data: str, ui_list: list[DisplayUIEnum]) -> list[UIJsonBase] | None:
+    """
+    This function generates a list of UI definition json based on the user's request and raw data given.
+    This function will loop through the list of UI elements and generate a UI definition json for each element using the `ui_json_generator_agent` agent.
+    Then it will return a list of UI definition json.
+    
+    Args:
+    raw_data (str): The raw data to display in the UI.
+    ui_list (list[DisplayUIEnum]): The list of UI elements to generate.
+    
+    Returns:
+    list: A list of UI definition json.
+    None: If the count is 1.
+    """
+    ui_json_list = []
+    for element in range(ui_list):
+        ui_json = await ui_json_generator_agent(f"Generate a {element} element that properly displays the raw data: {raw_data}")
+        ui_json_list.append(ui_json)
+    return ui_json_list
+
+async def multi_uijson_generator_agent(raw_data: str, user_input: str):
+  agent = Agent(
+    model=groq_model,
+    result_retries=3,
+    result_type=UIJsonBase,
+    system_prompt=(
+      "You are a Layout Element Generator AI for a ReactJS application.",
+      "Your job is to generate a styles layout container element that contains multiple UI elements as children.",
+      "The children elements would be generated using the `generate_ui_tool` function and will return a list of UI definition JSON.",
+      "Then you will need to structure the children elements based on the user's request and raw data given.",
+    ),
+    tools=[
+      Tool(
+        function=generate_ui,
+        name="generate_ui_tool",
+        description="This tool generates a list of UI definition json based on the user's request and raw data given.",
+      )
+    ]
+  )
+  result = await agent.run(f"user request: {user_input} raw data: {raw_data}")
   return result.data
