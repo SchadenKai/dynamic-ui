@@ -22,7 +22,7 @@ export default function useChatHistory(): ChatHistoryHook {
     const chatMessages = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/chat/history?token=b5574de824784a23cbd04bdce7e01481",
+          "http://localhost:8000/chat/history?token=f7e7f93ae6f226d56ecbc3385636fab7",
           {
             headers: {
               "Content-Type": "application/json",

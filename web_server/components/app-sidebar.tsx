@@ -22,8 +22,8 @@ const items = [
     icon: Inbox,
   },
   {
-    title: "UI JSON Schema",
-    url: "#",
+    title: "Template JSON",
+    url: "/template-json",
     icon: Calendar,
   }
 ];
