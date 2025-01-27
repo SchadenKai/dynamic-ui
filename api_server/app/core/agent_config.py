@@ -12,4 +12,4 @@ import logfire
 
 logfire.configure()
 
-groq_model = GroqModel(model_name="llama-3.1-70b-versatile", api_key=Settings().groq_api_key)
+groq_model = GroqModel(model_name="llama-3.3-70b-versatile", api_key=Settings().groq_api_key)
