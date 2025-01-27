@@ -27,6 +27,6 @@ const componentMap: Record<string, React.ComponentType<any>> = {
   "Textarea": Textarea,
 };
 
-export function mapTextToComponent(text: string): React.ComponentType<any> | null {
+export function  mapTextToComponent(text: string): React.ComponentType<any> | null {
   return componentMap[text] || null;
 }

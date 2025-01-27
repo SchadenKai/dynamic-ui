@@ -1,5 +1,5 @@
 from pydantic_ai import Agent
-from app.api.v1.schemas.template_json import TemplateJSON
+from app.api.v1.schemas.template_json import TemplateJSON, TemplateModel
 from app.core.agent_config import groq_model
 
 
@@ -14,13 +14,10 @@ async def template_json_generator_agent(user_input: str):
     agent = Agent(
         model=groq_model,
         result_retries=3,
-        result_type=TemplateJSON,
+        result_type=TemplateModel,
         system_prompt=(
             "You are a Template JSON Generator AI",
             "The Template JSON both includes the UI component definition and the API request definition that is requested by the user.",
-            "This is the api server where the API request will be sent: " + _SERVER,
-            "This is the single endpoint where varying body schema willl be sent: " + _ENDPOINT,
-            str(_HEADERS)
         )
     )
     response = await agent.run(user_input)
