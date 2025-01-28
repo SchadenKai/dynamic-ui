@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DynamicComponentRenderer from "@/lib/dynamicComponent";
-import { mapTextToComponent } from "@/utils/mapping";
 import React from "react";
 
 const Page: React.FC = () => {

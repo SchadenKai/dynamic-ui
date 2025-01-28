@@ -33,7 +33,7 @@ export const sendChatMessage = async (
   data: GenerateUIRequest
 ): Promise<GenerateUIResponse | string | null> => {
   const res = await fetch(
-    "http://localhost:8000/chat/llm/simple-generate-ui?token=f7e7f93ae6f226d56ecbc3385636fab7",
+    "http://localhost:8000/chat/llm/simple-generate-ui?token=d4a45d52370d5cbefb18d60ad522ebec",
     {
       method: "POST",
       headers: {

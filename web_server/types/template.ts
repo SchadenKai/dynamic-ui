@@ -1,18 +1,99 @@
-import { ApiRequest } from "./api-request";
-import { ChartComponent, FormComponent, ListComponent, ParagraphComponent, TableComponent } from "./component";
 
-export interface TemplateJSONComponent {
-    chart?: ChartComponent,
-    paragraph?: ParagraphComponent,
-    form?: FormComponent,
-    table?: TableComponent,
-    list?: ListComponent
-    // Add more component types here
+interface FieldModel {
+    field_name: string;
+    label: string;
+    value: string;
+    data_type: string;
+    sortable: boolean;
+    filterable: boolean;
+    hidden: boolean;
 }
 
-export interface TemplateJSON {
-    templateName: string, // Unique identifier for the template
-    description: string, // Metadata information for the LLM to know what the template is about
-    component: TemplateJSONComponent[], // List of components that make up the template
-    apiRequest: ApiRequest // API request object that the template uses
+interface TableComponentModel {
+    component_type: "table";
+    title: string;
+    description: string;
+    table_name: string;
+    fields: FieldModel[];
+}
+
+interface SubListModel {
+    field_name: string;
+    value: string;
+}
+
+interface ListModel {
+    value: string;
+    sub_list: SubListModel[];
+}
+
+interface ListComponentModel {
+    component_type: "list";
+    title: string;
+    description: string;
+    table_name: string;
+    list: ListModel[];
+}
+
+interface MarkdownComponent {
+    component_type: "markdown";
+    title: string;
+    description: string;
+    table_name: string;
+    content: string;
+}
+
+interface DatasetYData {
+    field_name: string;
+    label: string;
+    values: (number | string)[];
+}
+
+interface DatasetXData {
+    field_name: string;
+    label: string;
+    values: (number | string)[];
+}
+
+interface DatasetModel {
+    y_data: DatasetYData[];
+    x_data: DatasetXData;
+}
+
+interface LineGraphComponent {
+    component_type: "line_graph";
+    title: string;
+    description: string;
+    table_name: string;
+    datasets: DatasetModel;
+}
+
+interface BarGraphComponent {
+    component_type: "bar_graph";
+    title: string;
+    description: string;
+    table_name: string;
+    datasets: DatasetModel;
+}
+
+interface PieGraphDatasetModel {
+    field_name: string[];
+    label: string[];
+    values: (number | string)[];
+}
+
+interface PieGraphComponent {
+    component_type: "pie_graph";
+    title: string;
+    description: string;
+    table_name: string;
+    datasets: PieGraphDatasetModel;
+}
+
+type ComponentModel = TableComponentModel | ListComponentModel | MarkdownComponent | LineGraphComponent | BarGraphComponent | PieGraphComponent;
+
+export interface TemplateModel {
+    template_name: string;
+    description: string;
+    components: ComponentModel[];
 }
