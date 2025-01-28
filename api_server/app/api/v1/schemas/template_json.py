@@ -114,6 +114,6 @@ class ComponentModel(RootModel[Union[
     pass
 
 class TemplateModel(BaseModel):
-    template_name: str = Field(description="Unique name of the template which will be stored in the database incase of repeated request from the user for the same template")
+    template_name: str = Field(description="Unique name id of the template which will be stored in the database incase of repeated request from the user for the same template")
     description: str = Field(description="Metadata Description of the template")
     components: List[ComponentModel]

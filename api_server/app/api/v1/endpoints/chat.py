@@ -2,6 +2,7 @@ import json
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlmodel import Session
+from app.utils.extract_fieldnames import extract_table_and_field_names
 from app.services.llm.template_json_generator import template_json_generator_agent
 from app.services.llm.general import template_json_generator
 from app.db.models.chat import ChatHistory
@@ -46,7 +47,14 @@ async def get_llm_retrieve_data(request: ChatCreateBase):
 @router.post("/llm/template-json")
 async def template_json_generator(request: ChatCreateBase):
     response = await template_json_generator_agent(request.message)
-    return response
+    
+    api_query = extract_table_and_field_names(response)
+    print(f"API Query: {api_query}")
+    
+    return {
+        "template_json": response,
+        "api_query": api_query
+    }
 
 @router.post("/llm/simple-generate-ui")
 async def simple_generate_ui(request: ChatCreateBase, current_user: Users = Depends(get_current_user), db_session: Session = Depends(get_session)):
