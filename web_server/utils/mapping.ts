@@ -3,17 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 
-enum ComponentType {
-    Button = "Button",
-    Input = "Input",
-    Table = "Table",
-    TableBody = "TableBody",
-    TableCell = "TableCell",
-    TableHead = "TableHead",
-    TableHeader = "TableHeader",
-    TableRow = "TableRow",
-    Textarea = "Textarea",
-    }
 
 const componentMap: Record<string, React.ComponentType<any>> = {
   "Button": Button,
