@@ -45,6 +45,9 @@ const Page: React.FC = () => {
     {
       type: "Markdown",
       props: {
+        title: "Documentation",
+        description: "Project features and usage instructions",
+        table_name: "documentation",
         content: `# Example Markdown
 ## Features
 - **Bold text** and *italic text*
@@ -109,6 +112,9 @@ Visit our [website](https://example.com)`,
     {
       type: "LineChart",
       props: {
+        title: "Monthly Performance",
+        description: "Sales and revenue trends over time",
+        table_name: "monthly_metrics",
         className: "w-full h-[300px] p-4",
         datasets: {
           x_data: {
@@ -134,6 +140,9 @@ Visit our [website](https://example.com)`,
     {
       type: "BarChart",
       props: {
+        title: "Category Analysis",
+        description: "Comparison across different categories",
+        table_name: "category_metrics",
         className: "w-full h-[300px] p-4",
         datasets: {
           x_data: {
@@ -159,6 +168,9 @@ Visit our [website](https://example.com)`,
     {
       type: "PieChart",
       props: {
+        title: "Market Share",
+        description: "Distribution across market segments",
+        table_name: "market_segments",
         className: "w-full h-[300px] p-4",
         datasets: {
           field_name: ["segment1", "segment2", "segment3", "segment4"],

@@ -50,8 +50,8 @@ async def template_json_generator(request: ChatCreateBase):
     
     api_query = extract_table_and_field_names(response)
     print(f"API Query: {api_query}")
-    
-    
+        
+    # add the combined repsonse from the api_query and the template_json
     
     return {
         "template_json": response,

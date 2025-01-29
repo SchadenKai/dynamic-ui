@@ -32,13 +32,19 @@ interface TableComponentProps extends BaseComponentProps {
   fields: FieldModel[];
 }
 
-// Markdown component props
+// Markdown component props based on template schema
 interface MarkdownComponentProps extends BaseComponentProps {
+  title: string;
+  description: string;
+  table_name: string;
   content: string;
 }
 
 // Line and Bar chart props share the same structure
 interface XYChartProps extends BaseComponentProps {
+  title: string;
+  description: string;
+  table_name: string;
   datasets: {
     y_data: Array<{
       field_name: string;
@@ -55,6 +61,9 @@ interface XYChartProps extends BaseComponentProps {
 
 // Pie chart has a different data structure
 interface PieChartProps extends BaseComponentProps {
+  title: string;
+  description: string;
+  table_name: string;
   datasets: {
     field_name: string[];
     label: string[];
@@ -63,7 +72,8 @@ interface PieChartProps extends BaseComponentProps {
 }
 
 // Union type of all possible component props
-type ComponentProps = BaseComponentProps 
+type ComponentProps = 
+  | BaseComponentProps 
   | TableComponentProps 
   | MarkdownComponentProps 
   | XYChartProps 
