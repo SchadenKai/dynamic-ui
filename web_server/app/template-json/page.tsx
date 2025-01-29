@@ -61,8 +61,69 @@ console.log(greeting);
 > This is a blockquote
 
 Visit our [website](https://example.com)`,
-        className: "p-4 border rounded-lg",
-      },
+        className: "p-4 border rounded-lg"
+      }
+    },
+    {
+      type: "LineChart",
+      props: {
+        className: "w-full h-[300px] p-4",
+        datasets: {
+          x_data: {
+            field_name: "month",
+            label: "Month",
+            values: ["Jan", "Feb", "Mar", "Apr", "May"]
+          },
+          y_data: [
+            {
+              field_name: "sales",
+              label: "Sales",
+              values: [30, 40, 35, 50, 45]
+            },
+            {
+              field_name: "revenue",
+              label: "Revenue",
+              values: [50, 45, 55, 70, 65]
+            }
+          ]
+        }
+      }
+    },
+    {
+      type: "BarChart",
+      props: {
+        className: "w-full h-[300px] p-4",
+        datasets: {
+          x_data: {
+            field_name: "category",
+            label: "Category",
+            values: ["A", "B", "C", "D", "E"]
+          },
+          y_data: [
+            {
+              field_name: "value1",
+              label: "Value 1",
+              values: [20, 30, 40, 25, 35]
+            },
+            {
+              field_name: "value2",
+              label: "Value 2",
+              values: [15, 25, 35, 30, 20]
+            }
+          ]
+        }
+      }
+    },
+    {
+      type: "PieChart",
+      props: {
+        className: "w-full h-[300px] p-4",
+        datasets: {
+          field_name: ["segment1", "segment2", "segment3", "segment4"],
+          label: ["Segment 1", "Segment 2", "Segment 3", "Segment 4"],
+          values: [30, 25, 20, 25]
+        }
+      }
     },
     {
       type: "Table",

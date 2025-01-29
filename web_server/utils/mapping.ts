@@ -3,6 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Markdown } from "@/components/ui/markdown";
+import { LineChart } from "@/components/ui/charts/line-chart";
+import { BarChart } from "@/components/ui/charts/bar-chart";
+import { PieChart } from "@/components/ui/charts/pie-chart";
 import { ComponentType } from "react";
 
 // Base component props that all components should accept
@@ -16,8 +19,33 @@ interface MarkdownComponentProps extends BaseComponentProps {
   content: string;
 }
 
+// Line and Bar chart props share the same structure
+interface XYChartProps extends BaseComponentProps {
+  datasets: {
+    y_data: Array<{
+      field_name: string;
+      label: string;
+      values: (number | string)[];
+    }>;
+    x_data: {
+      field_name: string;
+      label: string;
+      values: (number | string)[];
+    };
+  };
+}
+
+// Pie chart has a different data structure
+interface PieChartProps extends BaseComponentProps {
+  datasets: {
+    field_name: string[];
+    label: string[];
+    values: (number | string)[];
+  };
+}
+
 // Union type of all possible component props
-type ComponentProps = BaseComponentProps | MarkdownComponentProps;
+type ComponentProps = BaseComponentProps | MarkdownComponentProps | XYChartProps | PieChartProps;
 
 const componentMap: Record<string, ComponentType<ComponentProps>> = {
   "Button": Button as ComponentType<ComponentProps>,
@@ -30,6 +58,9 @@ const componentMap: Record<string, ComponentType<ComponentProps>> = {
   "TableRow": TableRow as ComponentType<ComponentProps>,
   "Textarea": Textarea as ComponentType<ComponentProps>,
   "Markdown": Markdown as ComponentType<ComponentProps>,
+  "LineChart": LineChart as ComponentType<ComponentProps>,
+  "BarChart": BarChart as ComponentType<ComponentProps>,
+  "PieChart": PieChart as ComponentType<ComponentProps>,
 };
 
 const tableComponents = new Set([
