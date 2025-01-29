@@ -4,194 +4,213 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DynamicComponentRenderer from "@/lib/dynamicComponent";
 import React from "react";
-import { ComponentConfig, TableComponentProps, MarkdownComponentProps, XYChartProps, PieChartProps } from "@/utils/mapping";
+import { ComponentConfig, ComponentProps, TableComponentProps, MarkdownComponentProps, XYChartProps, PieChartProps } from "@/utils/mapping";
+
+interface TemplateResponse {
+  template_json: {
+    template_name: string;
+    description: string;
+    components: Array<{
+      component_type: string;
+      title: string;
+      description: string;
+      table_name: string;
+      fields?: Array<{
+        field_name: string;
+        label: string;
+        value: string | number | boolean[];
+        data_type: string;
+        sortable: boolean;
+        filterable: boolean;
+        hidden: boolean;
+      }>;
+      content?: string;
+      datasets?: {
+        x_data?: {
+          field_name: string;
+          label: string;
+          values: (number | string)[];
+        };
+        y_data?: Array<{
+          field_name: string;
+          label: string;
+          values: (number | string)[];
+        }>;
+        field_name?: string[];
+        label?: string[];
+        values?: (number | string)[];
+      };
+    }>;
+  };
+  api_query: unknown;
+}
 
 const Page: React.FC = () => {
-  const [response, setResponse] = React.useState<string | null>(null);
+  const [response, setResponse] = React.useState<TemplateResponse | null>(null);
   const [input, setInput] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
   const handleSend = async () => {
     setIsLoading(true);
     const data = {
       message: input,
     };
-    const response = await fetch(
-      "http://localhost:8000/chat/llm/template-json",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
-    const json = await response.json();
-    setResponse(json);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/chat/llm/template-json",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      const json = await response.json();
+      setResponse(json);
+    } catch (error) {
+      console.error("Error fetching template:", error);
+    }
     setIsLoading(false);
   };
 
-  const componentsData: ComponentConfig[] = [
-    {
-      type: "markdown",
-      props: {
-        component_type: "markdown",
-        title: "Documentation",
-        description: "Project features and usage instructions",
-        table_name: "documentation",
-        content: `# Example Markdown
-## Features
-- **Bold text** and *italic text*
-- Lists and nested lists
-  - Subitem 1
-  - Subitem 2
-- Code blocks
+  const mapResponseToComponents = (template: TemplateResponse): ComponentConfig[] => {
+    if (!template.template_json?.components) return [];
 
-\`\`\`javascript
-const greeting = "Hello World";
-console.log(greeting);
-\`\`\`
+    return template.template_json.components.map(component => {
+      const baseProps = {
+        component_type: component.component_type,
+        title: component.title,
+        description: component.description,
+        table_name: component.table_name,
+      };
 
-> This is a blockquote
+      let mappedProps: ComponentProps;
+      switch (component.component_type) {
+        case "table":
+          mappedProps = {
+            ...baseProps,
+            fields: component.fields || [],
+          } as TableComponentProps;
+          break;
 
-Visit our [website](https://example.com)`
-      } as MarkdownComponentProps,
-      className: "p-4 border rounded-lg"
-    },
-    {
-      type: "table",
-      props: {
-        component_type: "table",
-        title: "Employee Status",
-        description: "Current status of team members",
-        table_name: "employees",
-        fields: [
-          {
-            field_name: "name",
-            label: "Name",
-            value: "John Doe,Jane Smith",
-            data_type: "string",
-            sortable: true,
-            filterable: true,
-            hidden: false
-          },
-          {
-            field_name: "role",
-            label: "Role",
-            value: "Developer,Designer",
-            data_type: "string",
-            sortable: true,
-            filterable: true,
-            hidden: false
-          },
-          {
-            field_name: "status",
-            label: "Status",
-            value: "Active,Away",
-            data_type: "string",
-            sortable: true,
-            filterable: true,
-            hidden: false
+        case "markdown":
+          mappedProps = {
+            ...baseProps,
+            content: component.content || "",
+          } as MarkdownComponentProps;
+          break;
+
+        case "line_graph":
+        case "bar_graph":
+          if (component.datasets?.x_data && component.datasets?.y_data) {
+            mappedProps = {
+              ...baseProps,
+              datasets: {
+                x_data: component.datasets.x_data,
+                y_data: component.datasets.y_data,
+              },
+            } as XYChartProps;
+          } else {
+            throw new Error(`Invalid ${component.component_type} data structure`);
           }
-        ]
-      } as TableComponentProps,
-      className: "w-full"
-    },
-    {
-      type: "line_graph",
-      props: {
-        component_type: "line_graph",
-        title: "Monthly Performance",
-        description: "Sales and revenue trends over time",
-        table_name: "monthly_metrics",
-        datasets: {
-          x_data: {
-            field_name: "month",
-            label: "Month",
-            values: ["Jan", "Feb", "Mar", "Apr", "May"]
-          },
-          y_data: [
-            {
-              field_name: "sales",
-              label: "Sales",
-              values: [30, 40, 35, 50, 45]
-            },
-            {
-              field_name: "revenue",
-              label: "Revenue",
-              values: [50, 45, 55, 70, 65]
-            }
-          ]
-        }
-      } as XYChartProps,
-      className: "w-full h-[300px] p-4"
-    },
-    {
-      type: "bar_graph",
-      props: {
-        component_type: "bar_graph",
-        title: "Category Analysis",
-        description: "Comparison across different categories",
-        table_name: "category_metrics",
-        datasets: {
-          x_data: {
-            field_name: "category",
-            label: "Category",
-            values: ["A", "B", "C", "D", "E"]
-          },
-          y_data: [
-            {
-              field_name: "value1",
-              label: "Value 1",
-              values: [20, 30, 40, 25, 35]
-            },
-            {
-              field_name: "value2",
-              label: "Value 2",
-              values: [15, 25, 35, 30, 20]
-            }
-          ]
-        }
-      } as XYChartProps,
-      className: "w-full h-[300px] p-4"
-    },
-    {
-      type: "pie_graph",
-      props: {
-        component_type: "pie_graph",
-        title: "Market Share",
-        description: "Distribution across market segments",
-        table_name: "market_segments",
-        datasets: {
-          field_name: ["segment1", "segment2", "segment3", "segment4"],
-          label: ["Segment 1", "Segment 2", "Segment 3", "Segment 4"],
-          values: [30, 25, 20, 25]
-        }
-      } as PieChartProps,
-      className: "w-full h-[300px] p-4"
+          break;
+
+        case "pie_graph":
+          if (
+            component.datasets?.field_name &&
+            component.datasets?.label &&
+            component.datasets?.values
+          ) {
+            mappedProps = {
+              ...baseProps,
+              datasets: {
+                field_name: component.datasets.field_name,
+                label: component.datasets.label,
+                values: component.datasets.values,
+              },
+            } as PieChartProps;
+          } else {
+            throw new Error("Invalid pie graph data structure");
+          }
+          break;
+
+        default:
+          throw new Error(`Unknown component type: ${component.component_type}`);
+      }
+
+      return {
+        type: component.component_type,
+        props: mappedProps,
+        className: getDefaultClassForComponent(component.component_type)
+      };
+    });
+  };
+
+  const getDefaultClassForComponent = (type: string): string => {
+    switch (type) {
+      case "table":
+        return "w-full";
+      case "markdown":
+        return "p-4 border rounded-lg";
+      case "line_graph":
+      case "bar_graph":
+      case "pie_graph":
+        return "w-full h-[300px] p-4";
+      default:
+        return "";
     }
-  ];
+  };
 
   return (
-    <div className="flex flex-col items-center justify-start h-full w-full p-5 ">
-      <h1>Raw Data</h1>
+    <div className="flex flex-col items-center justify-start h-full w-full p-5">
+      <h1>Template Generator</h1>
       <Input
         onChange={(e) => setInput(e.currentTarget.value)}
-        className="mx-4"
+        className="mx-4 mb-2"
+        placeholder="Enter your request..."
       />
-      <Button disabled={isLoading} className="mx-4" onClick={handleSend}>
-        {isLoading ? "Loading..." : "Send"}
+      <Button disabled={isLoading} className="mx-4 mb-4" onClick={handleSend}>
+        {isLoading ? "Generating..." : "Generate Template"}
       </Button>
-      <div>{response && <pre>{JSON.stringify(response, null, 2)}</pre>}</div>
-      <div className="w-full my-4 border p-5 flex flex-col items-center justify-start gap-3">
-        {componentsData.map((component, index) => (
-          <DynamicComponentRenderer
-            key={index}
-            componentType={component.type}
-            props={component.props}
-            className={component.className}
-          />
-        ))}
-      </div>
+      
+      {response?.template_json && (
+        <div className="w-full">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold">{response.template_json.template_name}</h2>
+            <p className="text-sm text-muted-foreground">{response.template_json.description}</p>
+          </div>
+          
+          <div className="w-full my-4 border p-5 flex flex-col items-center justify-start gap-3">
+            {(() => {
+              try {
+                return mapResponseToComponents(response).map((component, index) => (
+                  <DynamicComponentRenderer
+                    key={index}
+                    componentType={component.type}
+                    props={component.props}
+                    className={component.className}
+                  />
+                ));
+              } catch (error) {
+                console.error('Error mapping components:', error);
+                return (
+                  <div className="p-4 border border-red-200 bg-red-50 text-red-700 rounded-lg">
+                    Error rendering components: {(error as Error).message}
+                  </div>
+                );
+              }
+            })()}
+          </div>
+
+          <div className="mt-4">
+            <h3 className="font-semibold mb-2">Raw Response</h3>
+            <pre className="bg-muted p-4 rounded-lg overflow-auto">
+              {JSON.stringify(response, null, 2)}
+            </pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
