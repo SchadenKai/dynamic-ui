@@ -16,7 +16,7 @@ export const generateUISS = async (
   data: GenerateUIRequest
 ): Promise<GenerateUIResponse | string | null> => {
   const res = await fetch(
-    "http://localhost:8000/chat/send-message?token=3fbdb3634ff0f1fa02b9d6629136ff4e",
+    "http://localhost:8000/chat/send-message?token=40c5e9e6c3ef8295ef9d0548243a440e",
     {
       method: "POST",
       headers: {
@@ -33,7 +33,7 @@ export const sendChatMessage = async (
   data: GenerateUIRequest
 ): Promise<GenerateUIResponse | string | null> => {
   const res = await fetch(
-    "http://localhost:8000/chat/llm/simple-generate-ui?token=d4a45d52370d5cbefb18d60ad522ebec",
+    "http://localhost:8000/chat/llm/simple-generate-ui?token=40c5e9e6c3ef8295ef9d0548243a440e",
     {
       method: "POST",
       headers: {

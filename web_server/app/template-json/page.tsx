@@ -33,7 +33,7 @@ const Page: React.FC = () => {
     {
       type: "Button",
       props: {
-        placeholder: "Enter text" ,
+        placeholder: "Enter text",
         children: "Click Me",
         onClick: () => {
           console.log("Hello World");
@@ -42,7 +42,58 @@ const Page: React.FC = () => {
     },
     { type: "Input", props: { placeholder: "Enter text" } },
     { type: "Textarea", props: { placeholder: "Enter more text" } },
-    { type: "Table", props: { children: "Table content" } },
+    {
+      type: "Table",
+      props: {
+        className: "w-full border-collapse",
+        children: [
+          {
+            type: "TableHeader",
+            props: {
+              children: [
+                {
+                  type: "TableRow",
+                  props: {
+                    children: [
+                      { type: "TableHead", props: { children: "Name" } },
+                      { type: "TableHead", props: { children: "Role" } },
+                      { type: "TableHead", props: { children: "Status" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            type: "TableBody",
+            props: {
+              children: [
+                {
+                  type: "TableRow",
+                  props: {
+                    children: [
+                      { type: "TableCell", props: { children: "John Doe" } },
+                      { type: "TableCell", props: { children: "Developer" } },
+                      { type: "TableCell", props: { children: "Active" } },
+                    ],
+                  },
+                },
+                {
+                  type: "TableRow",
+                  props: {
+                    children: [
+                      { type: "TableCell", props: { children: "Jane Smith" } },
+                      { type: "TableCell", props: { children: "Designer" } },
+                      { type: "TableCell", props: { children: "Away" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
   ];
 
   return (
