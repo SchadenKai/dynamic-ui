@@ -2,7 +2,7 @@
 interface FieldModel {
     field_name: string;
     label: string;
-    value: string;
+    value: string | number | boolean[];
     data_type: string;
     sortable: boolean;
     filterable: boolean;

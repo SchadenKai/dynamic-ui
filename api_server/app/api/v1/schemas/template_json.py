@@ -27,7 +27,7 @@ from typing import List, Optional, Union
 class FieldModel(BaseModel):
     field_name: str = Field(description="Name of the field in the table")
     label: str = Field(description="Display label of the field_name in the table")
-    value: str = Field(default="", description="Default value of the field_name in the table. This acts as a placeholder for the field value from the database")
+    value: List[Union[str | bool | int | float]] = Field(default=[], description="Key to store the rows of the field_name in the table. This acts as a placeholder for the data rows for the field from the database. This must be the same size for all the fields in the table")
     data_type: str = Field(description="Data type of the field_name in the table")
     sortable: bool
     filterable: bool
