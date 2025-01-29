@@ -38,7 +38,7 @@ const Page: React.FC = () => {
         onClick: () => {
           console.log("Hello World");
         },
-      },
+      }
     },
     { type: "Input", props: { placeholder: "Enter text" } },
     { type: "Textarea", props: { placeholder: "Enter more text" } },
@@ -63,9 +63,9 @@ console.log(greeting);
 
 > This is a blockquote
 
-Visit our [website](https://example.com)`,
-        className: "p-4 border rounded-lg"
-      }
+Visit our [website](https://example.com)`
+      },
+      className: "p-4 border rounded-lg"
     },
     {
       type: "DataTable",
@@ -101,9 +101,9 @@ Visit our [website](https://example.com)`,
             filterable: true,
             hidden: false
           }
-        ],
-        className: "w-full"
-      }
+        ]
+      },
+      className: "w-full"
     },
     {
       type: "LineChart",
@@ -111,7 +111,6 @@ Visit our [website](https://example.com)`,
         title: "Monthly Performance",
         description: "Sales and revenue trends over time",
         table_name: "monthly_metrics",
-        className: "w-full h-[300px] p-4",
         datasets: {
           x_data: {
             field_name: "month",
@@ -131,7 +130,8 @@ Visit our [website](https://example.com)`,
             }
           ]
         }
-      }
+      },
+      className: "w-full h-[300px] p-4"
     },
     {
       type: "BarChart",
@@ -139,7 +139,6 @@ Visit our [website](https://example.com)`,
         title: "Category Analysis",
         description: "Comparison across different categories",
         table_name: "category_metrics",
-        className: "w-full h-[300px] p-4",
         datasets: {
           x_data: {
             field_name: "category",
@@ -159,7 +158,8 @@ Visit our [website](https://example.com)`,
             }
           ]
         }
-      }
+      },
+      className: "w-full h-[300px] p-4"
     },
     {
       type: "PieChart",
@@ -167,13 +167,13 @@ Visit our [website](https://example.com)`,
         title: "Market Share",
         description: "Distribution across market segments",
         table_name: "market_segments",
-        className: "w-full h-[300px] p-4",
         datasets: {
           field_name: ["segment1", "segment2", "segment3", "segment4"],
           label: ["Segment 1", "Segment 2", "Segment 3", "Segment 4"],
           values: [30, 25, 20, 25]
         }
-      }
+      },
+      className: "w-full h-[300px] p-4"
     }
   ];
 
@@ -194,6 +194,7 @@ Visit our [website](https://example.com)`,
             key={index}
             componentType={component.type}
             props={component.props}
+            className={component.className}
           />
         ))}
       </div>
