@@ -43,6 +43,28 @@ const Page: React.FC = () => {
     { type: "Input", props: { placeholder: "Enter text" } },
     { type: "Textarea", props: { placeholder: "Enter more text" } },
     {
+      type: "Markdown",
+      props: {
+        content: `# Example Markdown
+## Features
+- **Bold text** and *italic text*
+- Lists and nested lists
+  - Subitem 1
+  - Subitem 2
+- Code blocks
+
+\`\`\`javascript
+const greeting = "Hello World";
+console.log(greeting);
+\`\`\`
+
+> This is a blockquote
+
+Visit our [website](https://example.com)`,
+        className: "p-4 border rounded-lg",
+      },
+    },
+    {
       type: "Table",
       props: {
         className: "w-full border-collapse",
