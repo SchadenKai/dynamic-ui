@@ -65,6 +65,48 @@ Visit our [website](https://example.com)`,
       }
     },
     {
+      type: "DataTable",
+      props: {
+        title: "Employee Status",
+        description: "Current status of team members",
+        table_name: "employees",
+        fields: [
+          {
+            field_name: "name",
+            label: "Name",
+            value: "",
+            data_type: "string",
+            sortable: true,
+            filterable: true,
+            hidden: false
+          },
+          {
+            field_name: "role",
+            label: "Role",
+            value: "",
+            data_type: "string",
+            sortable: true,
+            filterable: true,
+            hidden: false
+          },
+          {
+            field_name: "status",
+            label: "Status",
+            value: "",
+            data_type: "string",
+            sortable: true,
+            filterable: true,
+            hidden: false
+          }
+        ],
+        data: [
+          { name: "John Doe", role: "Developer", status: "Active" },
+          { name: "Jane Smith", role: "Designer", status: "Away" }
+        ],
+        className: "w-full"
+      }
+    },
+    {
       type: "LineChart",
       props: {
         className: "w-full h-[300px] p-4",
@@ -124,59 +166,7 @@ Visit our [website](https://example.com)`,
           values: [30, 25, 20, 25]
         }
       }
-    },
-    {
-      type: "Table",
-      props: {
-        className: "w-full border-collapse",
-        children: [
-          {
-            type: "TableHeader",
-            props: {
-              children: [
-                {
-                  type: "TableRow",
-                  props: {
-                    children: [
-                      { type: "TableHead", props: { children: "Name" } },
-                      { type: "TableHead", props: { children: "Role" } },
-                      { type: "TableHead", props: { children: "Status" } },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-          {
-            type: "TableBody",
-            props: {
-              children: [
-                {
-                  type: "TableRow",
-                  props: {
-                    children: [
-                      { type: "TableCell", props: { children: "John Doe" } },
-                      { type: "TableCell", props: { children: "Developer" } },
-                      { type: "TableCell", props: { children: "Active" } },
-                    ],
-                  },
-                },
-                {
-                  type: "TableRow",
-                  props: {
-                    children: [
-                      { type: "TableCell", props: { children: "Jane Smith" } },
-                      { type: "TableCell", props: { children: "Designer" } },
-                      { type: "TableCell", props: { children: "Away" } },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
+    }
   ];
 
   return (
