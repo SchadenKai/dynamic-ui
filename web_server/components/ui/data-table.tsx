@@ -12,15 +12,11 @@ import {
 interface FieldModel {
   field_name: string
   label: string
-  value: string
+  value: string | number | boolean[]
   data_type: string
   sortable: boolean
   filterable: boolean
   hidden: boolean
-}
-
-type DataRecord = {
-  [key: string]: string | number | boolean | null
 }
 
 export interface DataTableProps {
@@ -28,14 +24,35 @@ export interface DataTableProps {
   description: string
   table_name: string
   fields: FieldModel[]
-  data?: DataRecord[]
   className?: string
 }
 
 const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
-  ({ title, description, fields, data = [], className, ...props }, ref) => {
+  ({ title, description, fields, className, ...props }, ref) => {
     // Filter out hidden fields
     const visibleFields = fields.filter(field => !field.hidden)
+
+    // Transform field values into rows
+    const rows = React.useMemo(() => {
+      // Find the maximum array length among all field values
+      const maxLength = visibleFields.reduce((max, field) => {
+        const value = Array.isArray(field.value) ? field.value.length : 1
+        return Math.max(max, value)
+      }, 0)
+
+      // Create rows based on field values
+      return Array.from({ length: maxLength }, (_, rowIndex) => {
+        return visibleFields.reduce((row, field) => {
+          const value = Array.isArray(field.value)
+            ? field.value[rowIndex]
+            : rowIndex === 0 
+              ? field.value 
+              : ""
+          row[field.field_name] = value
+          return row
+        }, {} as Record<string, string | number | boolean>)
+      })
+    }, [visibleFields])
 
     return (
       <div ref={ref} className={cn("w-full", className)} {...props}>
@@ -66,7 +83,7 @@ const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((row, rowIndex) => (
+              {rows.map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {visibleFields.map((field) => (
                     <TableCell key={field.field_name}>
@@ -75,7 +92,7 @@ const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
                   ))}
                 </TableRow>
               ))}
-              {data.length === 0 && (
+              {rows.length === 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={visibleFields.length}

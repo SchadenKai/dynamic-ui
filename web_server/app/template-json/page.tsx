@@ -77,7 +77,7 @@ Visit our [website](https://example.com)`,
           {
             field_name: "name",
             label: "Name",
-            value: "",
+            value: ["John Doe", "Jane Smith"],
             data_type: "string",
             sortable: true,
             filterable: true,
@@ -86,7 +86,7 @@ Visit our [website](https://example.com)`,
           {
             field_name: "role",
             label: "Role",
-            value: "",
+            value: ["Developer", "Designer"],
             data_type: "string",
             sortable: true,
             filterable: true,
@@ -95,16 +95,12 @@ Visit our [website](https://example.com)`,
           {
             field_name: "status",
             label: "Status",
-            value: "",
+            value: ["Active", "Away"],
             data_type: "string",
             sortable: true,
             filterable: true,
             hidden: false
           }
-        ],
-        data: [
-          { name: "John Doe", role: "Developer", status: "Active" },
-          { name: "Jane Smith", role: "Designer", status: "Away" }
         ],
         className: "w-full"
       }
