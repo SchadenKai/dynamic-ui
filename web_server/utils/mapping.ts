@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Markdown } from "@/components/ui/markdown";
 import { LineChart } from "@/components/ui/charts/line-chart";
 import { BarChart } from "@/components/ui/charts/bar-chart";
@@ -24,6 +21,24 @@ interface TableComponentProps {
   description: string;
   table_name: string;
   fields: FieldModel[];
+}
+
+// List component props based on template schema
+interface SubListModel {
+  field_name: string;
+  value: string;
+}
+
+interface ListModel {
+  value: string;
+  sub_list: SubListModel[];
+}
+
+interface ListComponentProps {
+  title: string;
+  description: string;
+  table_name: string;
+  list: ListModel[];
 }
 
 // Markdown component props based on template schema
@@ -65,18 +80,13 @@ interface PieChartProps {
   };
 }
 
-// Base props for simple components
-interface SimpleComponentProps {
-  [key: string]: unknown;
-}
-
 // Union type of all possible component props
 type ComponentProps = 
   | TableComponentProps 
+  | ListComponentProps
   | MarkdownComponentProps 
   | XYChartProps 
-  | PieChartProps
-  | SimpleComponentProps;
+  | PieChartProps;
 
 // Higher order props that wrap component-specific props
 interface ComponentConfig {
@@ -86,14 +96,11 @@ interface ComponentConfig {
 }
 
 const componentMap: Record<string, ComponentType<ComponentProps & { className?: string }>> = {
-  "Button": Button as ComponentType<ComponentProps & { className?: string }>,
-  "Input": Input as ComponentType<ComponentProps & { className?: string }>,
-  "DataTable": DataTable as ComponentType<ComponentProps & { className?: string }>,
-  "Textarea": Textarea as ComponentType<ComponentProps & { className?: string }>,
-  "Markdown": Markdown as ComponentType<ComponentProps & { className?: string }>,
-  "LineChart": LineChart as ComponentType<ComponentProps & { className?: string }>,
-  "BarChart": BarChart as ComponentType<ComponentProps & { className?: string }>,
-  "PieChart": PieChart as ComponentType<ComponentProps & { className?: string }>,
+  "table": DataTable as ComponentType<ComponentProps & { className?: string }>,
+  "markdown": Markdown as ComponentType<ComponentProps & { className?: string }>,
+  "line_graph": LineChart as ComponentType<ComponentProps & { className?: string }>,
+  "bar_graph": BarChart as ComponentType<ComponentProps & { className?: string }>,
+  "pie_graph": PieChart as ComponentType<ComponentProps & { className?: string }>,
 };
 
 export function mapTextToComponent(
@@ -108,7 +115,10 @@ export type {
   ComponentConfig,
   ComponentProps,
   FieldModel,
+  SubListModel,
+  ListModel,
   TableComponentProps,
+  ListComponentProps,
   MarkdownComponentProps,
   XYChartProps,
   PieChartProps

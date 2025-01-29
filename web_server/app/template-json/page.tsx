@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DynamicComponentRenderer from "@/lib/dynamicComponent";
 import React from "react";
+import { ComponentConfig, TableComponentProps, MarkdownComponentProps, XYChartProps, PieChartProps } from "@/utils/mapping";
 
 const Page: React.FC = () => {
   const [response, setResponse] = React.useState<string | null>(null);
@@ -29,22 +30,11 @@ const Page: React.FC = () => {
     setIsLoading(false);
   };
 
-  const componentsData = [
+  const componentsData: ComponentConfig[] = [
     {
-      type: "Button",
+      type: "markdown",
       props: {
-        placeholder: "Enter text",
-        children: "Click Me",
-        onClick: () => {
-          console.log("Hello World");
-        },
-      }
-    },
-    { type: "Input", props: { placeholder: "Enter text" } },
-    { type: "Textarea", props: { placeholder: "Enter more text" } },
-    {
-      type: "Markdown",
-      props: {
+        component_type: "markdown",
         title: "Documentation",
         description: "Project features and usage instructions",
         table_name: "documentation",
@@ -64,12 +54,13 @@ console.log(greeting);
 > This is a blockquote
 
 Visit our [website](https://example.com)`
-      },
+      } as MarkdownComponentProps,
       className: "p-4 border rounded-lg"
     },
     {
-      type: "DataTable",
+      type: "table",
       props: {
+        component_type: "table",
         title: "Employee Status",
         description: "Current status of team members",
         table_name: "employees",
@@ -77,7 +68,7 @@ Visit our [website](https://example.com)`
           {
             field_name: "name",
             label: "Name",
-            value: ["John Doe", "Jane Smith"],
+            value: "John Doe,Jane Smith",
             data_type: "string",
             sortable: true,
             filterable: true,
@@ -86,7 +77,7 @@ Visit our [website](https://example.com)`
           {
             field_name: "role",
             label: "Role",
-            value: ["Developer", "Designer"],
+            value: "Developer,Designer",
             data_type: "string",
             sortable: true,
             filterable: true,
@@ -95,19 +86,20 @@ Visit our [website](https://example.com)`
           {
             field_name: "status",
             label: "Status",
-            value: ["Active", "Away"],
+            value: "Active,Away",
             data_type: "string",
             sortable: true,
             filterable: true,
             hidden: false
           }
         ]
-      },
+      } as TableComponentProps,
       className: "w-full"
     },
     {
-      type: "LineChart",
+      type: "line_graph",
       props: {
+        component_type: "line_graph",
         title: "Monthly Performance",
         description: "Sales and revenue trends over time",
         table_name: "monthly_metrics",
@@ -130,12 +122,13 @@ Visit our [website](https://example.com)`
             }
           ]
         }
-      },
+      } as XYChartProps,
       className: "w-full h-[300px] p-4"
     },
     {
-      type: "BarChart",
+      type: "bar_graph",
       props: {
+        component_type: "bar_graph",
         title: "Category Analysis",
         description: "Comparison across different categories",
         table_name: "category_metrics",
@@ -158,12 +151,13 @@ Visit our [website](https://example.com)`
             }
           ]
         }
-      },
+      } as XYChartProps,
       className: "w-full h-[300px] p-4"
     },
     {
-      type: "PieChart",
+      type: "pie_graph",
       props: {
+        component_type: "pie_graph",
         title: "Market Share",
         description: "Distribution across market segments",
         table_name: "market_segments",
@@ -172,7 +166,7 @@ Visit our [website](https://example.com)`
           label: ["Segment 1", "Segment 2", "Segment 3", "Segment 4"],
           values: [30, 25, 20, 25]
         }
-      },
+      } as PieChartProps,
       className: "w-full h-[300px] p-4"
     }
   ];
