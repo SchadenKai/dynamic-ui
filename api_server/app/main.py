@@ -10,7 +10,7 @@ from app.core.config import Settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await warm_up_connections()
+    # await warm_up_connections()
     print("App started")
     
     yield
