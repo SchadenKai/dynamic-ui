@@ -9,9 +9,9 @@ deepseek_chat_client = OpenAI(api_key=Settings().deepseek_ai_key, base_url="http
 
 from pydantic_ai.models.groq import GroqModel
 from pydantic_ai.models.openai import OpenAIModel
-import logfire
+# import logfire
 
-logfire.configure()
+# logfire.configure()
 
 groq_model = GroqModel(model_name="llama-3.3-70b-versatile", api_key=Settings().groq_api_key)
 openai_model = OpenAIModel(model_name="gpt-4o", api_key=Settings().openai_key)
