@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useGenerateUI } from "@/hooks/use-generate-ui";
 import HomePresentation from "./HomePresentation";
 import useChatHistory from "@/hooks/use-chat-histort";
+import { redirect } from "next/navigation";
 
 export default function Home() {
   const [userQuery, setUserQuery] = useState("");
@@ -15,6 +16,8 @@ export default function Home() {
   useEffect(() => {
     refreshChatHistory();
   }, []);
+
+  redirect("/template-json");
 
   return (
     <HomePresentation

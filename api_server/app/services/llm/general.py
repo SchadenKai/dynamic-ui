@@ -3,8 +3,6 @@ from pydantic_ai import Agent, Tool
 from sqlalchemy import text
 from sqlmodel import Session
 from app.services.llm.dynamic_ui import ui_json_generator_agent
-from app.db.session import get_sqlalchemy_engine
-from app.services.llm.execute_query import sql_generator_agent
 from app.core.agent_config import groq_model
 from pydantic import BaseModel, Field
 
@@ -70,34 +68,6 @@ class UIJsonBase(BaseModel):
     attributes: list[dict] = Field(default=[], description="The attributes of the element for example on click event for a button, type of inputs, etc.")
 
 
-
-def execute_query(query: str, params: dict = None) -> list[dict] | None:
-    """
-    Executes a raw SQL query with optional parameters using SQLModel.
-
-    Args:
-        query (str): The raw SQL query to execute.
-        params (dict, optional): Parameters to bind to the query. Defaults to None.
-
-    Returns:
-        list[dict]: A list of rows as dictionaries if the query returns results.
-        None: If the query doesn't return rows (e.g., INSERT, UPDATE).
-    """
-    with Session(get_sqlalchemy_engine()) as session:
-        # Use SQLAlchemy text for parameterized queries
-        statement = text(query)
-        result = session.execute(statement, params or {})
-
-        # Check if the query returns rows
-        if result.returns_rows:
-            rows = result.fetchall()
-            columns = result.keys()
-            return [dict(zip(columns, row)) for row in rows]
-        else:
-            session.commit()
-            return None
-
-
 async def generate_ui_json(count: int, raw_data: list[dict]) -> list[UIJsonBase]:
     """
     Generates a UI JSON based on the count or number of UI layouts to be created and raw_data.
@@ -118,12 +88,12 @@ async def template_json_generator(user_input: str):
         result_retries=3,
         result_type=UIJsonBase,
         tools=[
-            Tool(
-                name="sql_generator_agent",
-                function=sql_generator_agent,
-                description="Generates SQL queries based on the user's request.",
-                takes_ctx=False
-            ),
+            # Tool(
+            #     name="sql_generator_agent",
+            #     function=sql_generator_agent,
+            #     description="Generates SQL queries based on the user's request.",
+            #     takes_ctx=False
+            # ),
             Tool(
                 name="generate_ui_json",
                 function=generate_ui_json,

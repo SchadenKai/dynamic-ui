@@ -3,35 +3,34 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, Tool
 from sqlalchemy import text
 from sqlmodel import Session
-from app.db.session import get_sqlalchemy_engine
 from app.core.agent_config import openai_client, groq_model
 
 
-def execute_query(query: str, params: dict = None) -> list[dict] | None:
-    """
-    Executes a raw SQL query with optional parameters using SQLModel.
+# def execute_query(query: str, params: dict = None) -> list[dict] | None:
+#     """
+#     Executes a raw SQL query with optional parameters using SQLModel.
 
-    Args:
-        query (str): The raw SQL query to execute.
-        params (dict, optional): Parameters to bind to the query. Defaults to None.
+#     Args:
+#         query (str): The raw SQL query to execute.
+#         params (dict, optional): Parameters to bind to the query. Defaults to None.
 
-    Returns:
-        list[dict]: A list of rows as dictionaries if the query returns results.
-        None: If the query doesn't return rows (e.g., INSERT, UPDATE).
-    """
-    with Session(get_sqlalchemy_engine()) as session:
-        # Use SQLAlchemy text for parameterized queries
-        statement = text(query)
-        result = session.execute(statement, params or {})
+#     Returns:
+#         list[dict]: A list of rows as dictionaries if the query returns results.
+#         None: If the query doesn't return rows (e.g., INSERT, UPDATE).
+#     """
+#     with Session(get_sqlalchemy_engine()) as session:
+#         # Use SQLAlchemy text for parameterized queries
+#         statement = text(query)
+#         result = session.execute(statement, params or {})
 
-        # Check if the query returns rows
-        if result.returns_rows:
-            rows = result.fetchall()
-            columns = result.keys()
-            return [dict(zip(columns, row)) for row in rows]
-        else:
-            session.commit()
-            return None
+#         # Check if the query returns rows
+#         if result.returns_rows:
+#             rows = result.fetchall()
+#             columns = result.keys()
+#             return [dict(zip(columns, row)) for row in rows]
+#         else:
+#             session.commit()
+#             return None
 
 
 generate_sql_query_tool = {
@@ -78,37 +77,37 @@ generate_sql_query_tool_deepseek = {
 }
 
 
-def generate_query_from_prompt(user_request: str):
-    """
-    Uses the LLM to generate an SQL query and parameters from a user's request.
+# def generate_query_from_prompt(user_request: str):
+#     """
+#     Uses the LLM to generate an SQL query and parameters from a user's request.
 
-    Args:
-        user_request (str): The user's natural language request.
+#     Args:
+#         user_request (str): The user's natural language request.
 
-    Returns:
-        dict: Results from the executed SQL query or an error message.
-    """
-    try:
-        response = openai_client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "You are an assistant that generates SQL queries from user requests."},
-                {"role": "user", "content": user_request}
-            ],
-            functions=[generate_sql_query_tool],
-            function_call="auto" 
-        )
-        if response.choices[0].message.content:
-            return {"message": response.choices[0].message.content}
-        function_args = json.loads(response.choices[0].message.function_call.arguments)
-        query = function_args["query"]
-        params = function_args.get("params", {})
-        print("Generated query:", query)
-        print("Generated params:", params)
-        results = execute_query(query, params)
-        return results
-    except Exception as e:
-        return {"error": str(e)}
+#     Returns:
+#         dict: Results from the executed SQL query or an error message.
+#     """
+#     try:
+#         response = openai_client.chat.completions.create(
+#             model="gpt-4o",
+#             messages=[
+#                 {"role": "system", "content": "You are an assistant that generates SQL queries from user requests."},
+#                 {"role": "user", "content": user_request}
+#             ],
+#             functions=[generate_sql_query_tool],
+#             function_call="auto" 
+#         )
+#         if response.choices[0].message.content:
+#             return {"message": response.choices[0].message.content}
+#         function_args = json.loads(response.choices[0].message.function_call.arguments)
+#         query = function_args["query"]
+#         params = function_args.get("params", {})
+#         print("Generated query:", query)
+#         print("Generated params:", params)
+#         results = execute_query(query, params)
+#         return results
+#     except Exception as e:
+#         return {"error": str(e)}
 
 _DB_SCHEMA_DUMP = """
 CREATE SCHEMA public;
@@ -316,50 +315,50 @@ ALTER TABLE ONLY public.sessiontoken
 """
 
 
-class SQLSchemaBase(BaseModel):
-    query: str = Field(description="The raw SQL query to execute.")
-    params: dict = Field(default={}, description="Optional parameters to bind to the query.")
+# class SQLSchemaBase(BaseModel):
+#     query: str = Field(description="The raw SQL query to execute.")
+#     params: dict = Field(default={}, description="Optional parameters to bind to the query.")
 
-async def sql_generator_agent(user_input: str):
-    agent = Agent(
-        model=groq_model,
-        result_retries=3,
-        result_type=list[dict] | None,
-        result_tool_description="The raw results of the `execute_query` function call.",
-        system_prompt=(
-            "You are an assistant that generates SQL queries from user requests and automatically runs the function `execute_query` once detected that the user's intent is to interact with the database.",
-            "This is the schema of the database you are working with",
-            _DB_SCHEMA_DUMP,
-            "The in the final step, return the results of `execute_query` function call."
-        ),
-        tools=[
-            Tool(function=execute_query, 
-                 takes_ctx=False, name="execute_query", 
-                 description="Executes a raw SQL query with optional parameters using SQLModel.",
-                ),
-        ]
-    )
-    results = await agent.run(user_input)
-    return results.data
+# async def sql_generator_agent(user_input: str):
+#     agent = Agent(
+#         model=groq_model,
+#         result_retries=3,
+#         result_type=list[dict] | None,
+#         result_tool_description="The raw results of the `execute_query` function call.",
+#         system_prompt=(
+#             "You are an assistant that generates SQL queries from user requests and automatically runs the function `execute_query` once detected that the user's intent is to interact with the database.",
+#             "This is the schema of the database you are working with",
+#             _DB_SCHEMA_DUMP,
+#             "The in the final step, return the results of `execute_query` function call."
+#         ),
+#         tools=[
+#             Tool(function=execute_query, 
+#                  takes_ctx=False, name="execute_query", 
+#                  description="Executes a raw SQL query with optional parameters using SQLModel.",
+#                 ),
+#         ]
+#     )
+#     results = await agent.run(user_input)
+#     return results.data
 
-async def sql_generator_second_agent(ctx, user_input: str):
-    agent = Agent(
-        model=groq_model,
-        result_retries=3,
-        result_type=list[dict] | None,
-        result_tool_description="The raw results of the `execute_query` function call.",
-        system_prompt=(
-            "You are an assistant that generates SQL queries from user requests and automatically runs the function `execute_query` once detected that the user's intent is to interact with the database.",
-            "This is the schema of the database you are working with",
-            _DB_SCHEMA_DUMP,
-            "The in the final step, return the results of `execute_query` function call."
-        ),
-        tools=[
-            Tool(function=execute_query, 
-                 takes_ctx=False, name="execute_query", 
-                 description="Executes a raw SQL query with optional parameters using SQLModel.",
-                ),
-        ]
-    )
-    results = await agent.run(user_input)
-    return results.data
+# async def sql_generator_second_agent(ctx, user_input: str):
+#     agent = Agent(
+#         model=groq_model,
+#         result_retries=3,
+#         result_type=list[dict] | None,
+#         result_tool_description="The raw results of the `execute_query` function call.",
+#         system_prompt=(
+#             "You are an assistant that generates SQL queries from user requests and automatically runs the function `execute_query` once detected that the user's intent is to interact with the database.",
+#             "This is the schema of the database you are working with",
+#             _DB_SCHEMA_DUMP,
+#             "The in the final step, return the results of `execute_query` function call."
+#         ),
+#         tools=[
+#             Tool(function=execute_query, 
+#                  takes_ctx=False, name="execute_query", 
+#                  description="Executes a raw SQL query with optional parameters using SQLModel.",
+#                 ),
+#         ]
+#     )
+#     results = await agent.run(user_input)
+#     return results.data

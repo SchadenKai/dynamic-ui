@@ -8,19 +8,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
 
 const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "Retrieve Data",
-    url: "/retrieve-data",
-    icon: Inbox,
-  },
+  // {
+  //   title: "Home",
+  //   url: "/",
+  //   icon: Home,
+  // },
+  // {
+  //   title: "Retrieve Data",
+  //   url: "/retrieve-data",
+  //   icon: Inbox,
+  // },
   {
     title: "Template JSON",
     url: "/template-json",
