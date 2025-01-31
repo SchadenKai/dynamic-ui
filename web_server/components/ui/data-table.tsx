@@ -106,10 +106,10 @@ const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
               )}
             </TableBody>
           </Table>
-          <div className="flex flex-row w-full justify-end gap-3">
+          {/* <div className="flex flex-row w-full justify-end gap-3">
             <Button className="">Start</Button>
             <Button className="">End</Button>
-          </div>
+          </div> */}
         </div>
       </div>
     );
