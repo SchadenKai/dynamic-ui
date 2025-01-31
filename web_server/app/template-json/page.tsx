@@ -155,6 +155,7 @@ const Page: React.FC = () => {
         return "p-4 border rounded-lg";
       case "line_graph":
       case "bar_graph":
+        // return "w-full w-[700px] p-4";
       case "pie_graph":
         return "w-full h-[300px] p-4";
       default:
@@ -167,7 +168,7 @@ const Page: React.FC = () => {
       <h1>Template Generator</h1>
       <Input
         onChange={(e) => setInput(e.currentTarget.value)}
-        className="mx-4 mb-2"
+        className="mx-4 mb-2 p-4"
         placeholder="Enter your request..."
       />
       <Button disabled={isLoading} className="mx-4 mb-4" onClick={handleSend}>

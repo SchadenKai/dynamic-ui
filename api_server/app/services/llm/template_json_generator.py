@@ -1,6 +1,6 @@
 from pydantic_ai import Agent
 from app.api.v1.schemas.template_json import TemplateJSON, TemplateModel
-from app.core.agent_config import groq_model
+from app.core.agent_config import groq_model, openai_model
 
 
 _SERVER = "https://stgapp.coolriots.ai/bexo"

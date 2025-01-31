@@ -1,5 +1,5 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -7,52 +7,54 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import { Button } from "./button";
+import { Input } from "./input";
 
 interface FieldModel {
-  field_name: string
-  label: string
-  value: string | number | boolean[]
-  data_type: string
-  sortable: boolean
-  filterable: boolean
-  hidden: boolean
+  field_name: string;
+  label: string;
+  value: string | number | boolean[];
+  data_type: string;
+  sortable: boolean;
+  filterable: boolean;
+  hidden: boolean;
 }
 
 export interface DataTableProps {
-  title: string
-  description: string
-  table_name: string
-  fields: FieldModel[]
-  className?: string
+  title: string;
+  description: string;
+  table_name: string;
+  fields: FieldModel[];
+  className?: string;
 }
 
 const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
   ({ title, description, fields, className, ...props }, ref) => {
     // Filter out hidden fields
-    const visibleFields = fields.filter(field => !field.hidden)
+    const visibleFields = fields.filter((field) => !field.hidden);
 
     // Transform field values into rows
     const rows = React.useMemo(() => {
       // Find the maximum array length among all field values
       const maxLength = visibleFields.reduce((max, field) => {
-        const value = Array.isArray(field.value) ? field.value.length : 1
-        return Math.max(max, value)
-      }, 0)
+        const value = Array.isArray(field.value) ? field.value.length : 1;
+        return Math.max(max, value);
+      }, 0);
 
       // Create rows based on field values
       return Array.from({ length: maxLength }, (_, rowIndex) => {
         return visibleFields.reduce((row, field) => {
           const value = Array.isArray(field.value)
             ? field.value[rowIndex]
-            : rowIndex === 0 
-              ? field.value 
-              : ""
-          row[field.field_name] = value
-          return row
-        }, {} as Record<string, string | number | boolean>)
-      })
-    }, [visibleFields])
+            : rowIndex === 0
+            ? field.value
+            : "";
+          row[field.field_name] = value;
+          return row;
+        }, {} as Record<string, string | number | boolean>);
+      });
+    }, [visibleFields]);
 
     return (
       <div ref={ref} className={cn("w-full", className)} {...props}>
@@ -67,6 +69,7 @@ const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
           </div>
         )}
         <div className="rounded-md border">
+          {/* <Input /> */}
           <Table>
             <TableHeader>
               <TableRow>
@@ -74,7 +77,7 @@ const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
                   <TableHead
                     key={field.field_name}
                     className={cn(
-                      field.sortable && "cursor-pointer select-none",
+                      field.sortable && "cursor-pointer select-none"
                     )}
                   >
                     {field.label}
@@ -104,11 +107,15 @@ const DataTable = React.forwardRef<HTMLDivElement, DataTableProps>(
               )}
             </TableBody>
           </Table>
+          <div className="flex flex-row w-full justify-end gap-3">
+            <Button className="">Start</Button>
+            <Button className="">End</Button>
+          </div>
         </div>
       </div>
-    )
+    );
   }
-)
-DataTable.displayName = "DataTable"
+);
+DataTable.displayName = "DataTable";
 
-export { DataTable }
+export { DataTable };
