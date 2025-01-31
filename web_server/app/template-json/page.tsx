@@ -57,7 +57,7 @@ const Page: React.FC = () => {
     };
     try {
       const response = await fetch(
-        "http://localhost:8000/chat/llm/template-json",
+        "https://dynamic-ui-beta.vercel.app/chat/llm/template-json",
         {
           method: "POST",
           headers: {
