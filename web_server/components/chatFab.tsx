@@ -1,8 +1,6 @@
 import {
   LucideBot,
-  LucideMinimize,
   LucideMinimize2,
-  LucidePanelRightClose,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";

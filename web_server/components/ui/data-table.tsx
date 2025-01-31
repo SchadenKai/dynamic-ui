@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "./button";
-import { Input } from "./input";
 
 interface FieldModel {
   field_name: string;
